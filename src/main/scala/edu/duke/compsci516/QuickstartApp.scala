@@ -8,18 +8,29 @@ import akka.http.scaladsl.server.Route
 import scala.util.Failure
 import scala.util.Success
 
+import edu.duke.compsci516.components._
+
 //#main-class
-object QuickstartApp {
+object QuickstartApp extends ConfigComponent with DatabaseComponent {
+  val host = config.getString("application.host")
+  val port = config.getInt("application.port")
+
   //#start-http-server
-  private def startHttpServer(routes: Route)(implicit system: ActorSystem[_]): Unit = {
+  private def startHttpServer(
+      routes: Route
+  )(implicit system: ActorSystem[_]): Unit = {
     // Akka HTTP still needs a classic ActorSystem to start
     import system.executionContext
 
-    val futureBinding = Http().newServerAt("localhost", 8080).bind(routes)
+    val futureBinding = Http().newServerAt(this.host, this.port).bind(routes)
     futureBinding.onComplete {
       case Success(binding) =>
         val address = binding.localAddress
-        system.log.info("Server online at http://{}:{}/", address.getHostString, address.getPort)
+        system.log.info(
+          "Server online at http://{}:{}/",
+          address.getHostString,
+          address.getPort
+        )
       case Failure(ex) =>
         system.log.error("Failed to bind HTTP endpoint, terminating system", ex)
         system.terminate()

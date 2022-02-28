@@ -1,3 +1,10 @@
 *.class
 .idea
+*.un~
 target/
+**/*/.metals/
+project/project/
+project/metals.sbt
+.bloop/
+.metals/
+.scalafmt.conf
