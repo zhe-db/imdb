@@ -11,7 +11,7 @@ import scala.util.Success
 import edu.duke.compsci516.components._
 
 //#main-class
-object QuickstartApp extends ConfigComponent with DatabaseComponent {
+object App extends ConfigComponent with DatabaseComponent {
   val host = config.getString("application.host")
   val port = config.getInt("application.port")
 
