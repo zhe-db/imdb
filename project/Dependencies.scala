@@ -18,6 +18,7 @@ object Library {
     "com.typesafe.akka" %% "akka-http-spray-json" % Version.akkaHttp
   val slick = "com.typesafe.slick" %% "slick" % Version.slick
   val slickHikariCP = "com.typesafe.slick" %% "slick-hikaricp" % Version.slick
+  val slickCodegen = "com.typesafe.slick" %% "slick-codegen" % Version.slick
   val postgresql = "org.postgresql" % "postgresql" % Version.postgres
   val akkaHttp = "com.typesafe.akka" %% "akka-http" % Version.akkaHttp
   val json4sNative = "org.json4s" %% "json4s-native" % Version.json4s
@@ -39,6 +40,7 @@ object Dependencies {
     akkaSparyJson,
     slick,
     slickHikariCP,
+    slickCodegen,
     postgresql,
     akkaHttp,
     json4sNative,
