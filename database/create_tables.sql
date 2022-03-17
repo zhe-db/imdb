@@ -16,29 +16,33 @@ CREATE TABLE IF NOT EXISTS accounts (
 );
 
 CREATE TABLE IF NOT EXISTS ratings (
-    uuid text NOT NULL PRIMARY KEY,
-    movie_id INTEGER PRIMARY KEY REFERENCES moviedetail (movie_id),
-    rates FLOAT
+    uuid text NOT NULL,
+    movie_id INTEGER REFERENCES moviedetail (id),
+    rates FLOAT,
+    PRIMARY KEY(uuid, movie_id)
 );
 
 CREATE TABLE IF NOT EXISTS favourite (
-    uuid text NOT NULL PRIMARY KEY,
-    movie_id INTEGER REFERENCES moviedetail (movie_id)
+    uuid text NOT NULL,
+    movie_id INTEGER REFERENCES moviedetail (id),
+    PRIMARY KEY(uuid, movie_id)
 );
 
 CREATE TABLE IF NOT EXISTS actorlikes (
-    uuid text NOT NULL PRIMARY KEY,
-    actor_id INTEGER REFERENCES actors (actor_id)
+    uuid text NOT NULL,
+    actor_id INTEGER REFERENCES Cast_info (id),
+    PRIMARY KEY(uuid, actor_id)
 );
 
 CREATE TABLE IF NOT EXISTS viewhistory (
-    uuid text PRIMARY KEY,
-    movie_id INTEGER REFERENCES moviedetail (movie_id),
-    TIME TIMESTAMP
+    uuid text NOT NULL,
+    movie_id INTEGER REFERENCES moviedetail (id),
+    TIME TIMESTAMP,
+    PRIMARY KEY(uuid, movie_id)
 );
 
 CREATE TABLE IF NOT EXISTS moviedetail (
-    movie_id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     adult BOOLEAN NOT NULL,
     backdrop_path TEXT,
     budget INTEGER,
@@ -54,25 +58,27 @@ CREATE TABLE IF NOT EXISTS moviedetail (
 );
 
 CREATE TABLE IF NOT EXISTS genretypes (
-    genre_id INTEGER NOT NULL PRIMARY KEY,
-    genre_name TEXT NOT NULL
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS moviegenre (
-    movie_id INTEGER NOT NULL PRIMARY KEY REFERENCES moviedetail (movie_id),
-    genre_id INTEGER NOT NULL REFERENCES genretypes (genre_id)
+    movie_id INTEGER NOT NULL REFERENCES moviedetail (id),
+    genre_id INTEGER NOT NULL REFERENCES genretypes (id),
+    PRIMARY KEY(movie_id, genre_id)
 );
 
-CREATE TABLE IF NOT EXISTS movieactor (
-    movie_id INTEGER NOT NULL PRIMARY KEY REFERENCES moviedetail (movie_id),
-    actor_id INTEGER NOT NULL REFERENCES actors (actor_id)
+CREATE TABLE IF NOT EXISTS Movie_Cast (
+    movie_id INTEGER NOT NULL REFERENCES moviedetail (id),
+    cast_id INTEGER NOT NULL REFERENCES Cast_info (id),
+    PRIMARY KEY(movie_id, cast_id)
 );
 
-CREATE TABLE IF NOT EXISTS actors (
-    actor_id INTEGER NOT NULL PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS Cast_info (
+    id INTEGER NOT NULL PRIMARY KEY,
     birthday DATE,
     know_for_department TEXT,
-    actor_name TEXT NOT NULL,
+    name TEXT NOT NULL,
     gender INTEGER NOT NULL,
     biography TEXT,
     place_of_birth TEXT,
