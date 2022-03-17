@@ -4,11 +4,14 @@ import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.Directives._
 
 import scala.util.Failure
 import scala.util.Success
 
 import edu.duke.compsci516.components._
+import edu.duke.compsci516.http.services.UserRegistry
+import edu.duke.compsci516.http.routes.UserRoutes
 
 //#main-class
 object App extends ConfigComponent with DatabaseComponent {
@@ -40,7 +43,8 @@ object App extends ConfigComponent with DatabaseComponent {
   def main(args: Array[String]): Unit = {
     //#server-bootstrapping
     val rootBehavior = Behaviors.setup[Nothing] { context =>
-      val userRegistryActor = context.spawn(UserRegistry(), "UserRegistryActor")
+      val userRegistryActor =
+        context.spawn(UserRegistry(), "UserRegistryActor")
       context.watch(userRegistryActor)
 
       val routes = new UserRoutes(userRegistryActor)(context.system)
