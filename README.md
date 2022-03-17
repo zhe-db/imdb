@@ -4,7 +4,14 @@ Course group project for 22 Spring CS516. Team: zw245, bl243, cb498, ys344
 
 ## Installation
 
-1. Install Docker
+1. Install Docker 
 2. `docker pull postgres`
 3. `docker pull baz55w/imdb_project`
-4. `docker compose up -d`
+
+## Start postgres (on master branch)
+Run `docker compose up`
+Postgres port: 5500
+
+## Start backend (on master branch)
+Run `sbt run`
+Backend port: 8080
