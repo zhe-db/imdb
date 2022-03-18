@@ -39,40 +39,44 @@ CREATE TABLE IF NOT EXISTS castinfo (
 );
 
 CREATE TABLE IF NOT EXISTS userratings (
-    user_id uuid NOT NULL REFERNCES users (id) ON DELETE CASCADE,
+    review_uuid uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     movie_id INTEGER REFERENCES moviedetail (id) ON DELETE CASCADE,
     rates FLOAT,
-    PRIMARY KEY(uuid, movie_id)
+    CONSTRAINT per_user_rating UNIQUE (user_id, movie_id)
 );
 
-CREATE TABLE IF NOT EXISTS userfavourite (
-    user_id uuid NOT NULL REFERNCES users (id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS userfavmovie (
+    favourite_id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     movie_id INTEGER REFERENCES moviedetail (id) ON DELETE CASCADE,
-    PRIMARY KEY(uuid, movie_id)
+    CONSTRAINT per_user_movie UNIQUE (user_id, movie_id)
 );
 
-CREATE TABLE IF NOT EXISTS actorlikes (
-    user_id uuid NOT NULL REFERNCES users (id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS userfavactor (
+    actor_like_id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     actor_id INTEGER REFERENCES castinfo (id) ON DELETE CASCADE,
-    PRIMARY KEY(uuid, actor_id)
+    CONSTRAINT per_user_actor UNIQUE (user_id, actor_id)
 );
 
-CREATE TABLE IF NOT EXISTS viewhistory (
-    user_id uuid NOT NULL REFERNCES users (id) ON DELETE CASCADE,
+CREATE TABLE IF NOT EXISTS userview (
+    view_id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     movie_id INTEGER REFERENCES moviedetail (id) ON DELETE CASCADE,
     TIME TIMESTAMP,
-    PRIMARY KEY(uuid, movie_id)
+    CONSTRAINT per_user_review UNIQUE (user_id, movie_id)
 );
 
 
-CREATE TABLE IF NOT EXISTS genretypes (
+CREATE TABLE IF NOT EXISTS genre (
     id INTEGER NOT NULL PRIMARY KEY,
     name TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS moviegenre (
     movie_id INTEGER NOT NULL REFERENCES moviedetail (id) ON DELETE CASCADE,
-    genre_id INTEGER NOT NULL REFERENCES genretypes (id),
+    genre_id INTEGER NOT NULL REFERENCES genre (id),
     PRIMARY KEY(movie_id, genre_id)
 );
 
