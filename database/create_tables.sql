@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS userfavourite (
 
 CREATE TABLE IF NOT EXISTS actorlikes (
     uuid text NOT NULL,
-    actor_id INTEGER REFERENCES Cast_info (id),
+    actor_id INTEGER REFERENCES castinfo (id),
     PRIMARY KEY(uuid, actor_id)
 );
 
@@ -78,6 +78,6 @@ CREATE TABLE IF NOT EXISTS moviegenre (
 
 CREATE TABLE IF NOT EXISTS moviecast (
     movie_id INTEGER NOT NULL REFERENCES moviedetail (id),
-    cast_id INTEGER NOT NULL REFERENCES Cast_info (id),
+    cast_id INTEGER NOT NULL REFERENCES castinfo (id),
     PRIMARY KEY(movie_id, cast_id)
 );
