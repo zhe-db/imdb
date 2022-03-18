@@ -6,6 +6,10 @@ import akka.http.scaladsl.server.Route
 import akka.actor.typed.ActorRef
 import akka.actor.typed.ActorSystem
 import akka.actor.typed.scaladsl.AskPattern._
+import akka.http.scaladsl.model._
+import akka.http.scaladsl.model.headers._
+import akka.http.scaladsl.server.Route
+import akka.http.scaladsl.server.directives.Credentials
 import akka.util.Timeout
 
 import scala.concurrent.Future
@@ -14,6 +18,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import edu.duke.compsci516.models.entity.{User, Users, APIUser}
 import edu.duke.compsci516.http.services._
 import edu.duke.compsci516.http.services.UserRegistry._
+import edu.duke.compsci516.http.services.Authenticator
 
 class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
     val system: ActorSystem[_]
@@ -49,7 +54,13 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
         pathEnd {
           concat(
             get {
-              complete(getUsers())
+              authenticateBasicAsync(
+                realm = "secure",
+                Authenticator.UserAuthenticatorAsync
+              ) { user =>
+                println(user)
+                complete(getUsers())
+              }
             },
             post {
               entity(as[APIUser]) { user =>
@@ -67,8 +78,23 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
             get {
               //#retrieve-user-info
               rejectEmptyResponse {
-                onSuccess(getUser(email)) { response =>
-                  complete(response.maybeUser)
+                authenticateBasicAsync(
+                  realm = "secure",
+                  Authenticator.UserAuthenticatorAsync
+                ) { user =>
+                  if (user.email == email)
+                    onSuccess(getUser(email)) { response =>
+                      complete(response.maybeUser)
+                    }
+                  else {
+                    complete(
+                      HttpResponse(
+                        StatusCodes.BadRequest,
+                        entity = "No Access Allowed"
+                      )
+                    )
+                  }
+
                 }
               }
               //#retrieve-user-info
