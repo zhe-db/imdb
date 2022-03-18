@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS moviedetail (
     vote_average FLOAT
 );
 
-CREATE TABLE IF NOT EXISTS Cast_info (
+CREATE TABLE IF NOT EXISTS castinfo (
     id INTEGER NOT NULL PRIMARY KEY,
     birthday DATE,
     know_for_department TEXT,
@@ -38,14 +38,14 @@ CREATE TABLE IF NOT EXISTS Cast_info (
     profile_path TEXT
 );
 
-CREATE TABLE IF NOT EXISTS ratings (
+CREATE TABLE IF NOT EXISTS userratings (
     uuid text NOT NULL,
     movie_id INTEGER REFERENCES moviedetail (id),
     rates FLOAT,
     PRIMARY KEY(uuid, movie_id)
 );
 
-CREATE TABLE IF NOT EXISTS favourite (
+CREATE TABLE IF NOT EXISTS userfavourite (
     uuid text NOT NULL,
     movie_id INTEGER REFERENCES moviedetail (id),
     PRIMARY KEY(uuid, movie_id)
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS moviegenre (
     PRIMARY KEY(movie_id, genre_id)
 );
 
-CREATE TABLE IF NOT EXISTS Movie_Cast (
+CREATE TABLE IF NOT EXISTS moviecast (
     movie_id INTEGER NOT NULL REFERENCES moviedetail (id),
     cast_id INTEGER NOT NULL REFERENCES Cast_info (id),
     PRIMARY KEY(movie_id, cast_id)
