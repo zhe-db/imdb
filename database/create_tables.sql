@@ -39,27 +39,27 @@ CREATE TABLE IF NOT EXISTS castinfo (
 );
 
 CREATE TABLE IF NOT EXISTS userratings (
-    uuid text NOT NULL,
-    movie_id INTEGER REFERENCES moviedetail (id),
+    user_id uuid NOT NULL REFERNCES users (id) ON DELETE CASCADE,
+    movie_id INTEGER REFERENCES moviedetail (id) ON DELETE CASCADE,
     rates FLOAT,
     PRIMARY KEY(uuid, movie_id)
 );
 
 CREATE TABLE IF NOT EXISTS userfavourite (
-    uuid text NOT NULL,
-    movie_id INTEGER REFERENCES moviedetail (id),
+    user_id uuid NOT NULL REFERNCES users (id) ON DELETE CASCADE,
+    movie_id INTEGER REFERENCES moviedetail (id) ON DELETE CASCADE,
     PRIMARY KEY(uuid, movie_id)
 );
 
 CREATE TABLE IF NOT EXISTS actorlikes (
-    uuid text NOT NULL,
-    actor_id INTEGER REFERENCES castinfo (id),
+    user_id uuid NOT NULL REFERNCES users (id) ON DELETE CASCADE,
+    actor_id INTEGER REFERENCES castinfo (id) ON DELETE CASCADE,
     PRIMARY KEY(uuid, actor_id)
 );
 
 CREATE TABLE IF NOT EXISTS viewhistory (
-    uuid text NOT NULL,
-    movie_id INTEGER REFERENCES moviedetail (id),
+    user_id uuid NOT NULL REFERNCES users (id) ON DELETE CASCADE,
+    movie_id INTEGER REFERENCES moviedetail (id) ON DELETE CASCADE,
     TIME TIMESTAMP,
     PRIMARY KEY(uuid, movie_id)
 );
@@ -71,13 +71,13 @@ CREATE TABLE IF NOT EXISTS genretypes (
 );
 
 CREATE TABLE IF NOT EXISTS moviegenre (
-    movie_id INTEGER NOT NULL REFERENCES moviedetail (id),
+    movie_id INTEGER NOT NULL REFERENCES moviedetail (id) ON DELETE CASCADE,
     genre_id INTEGER NOT NULL REFERENCES genretypes (id),
     PRIMARY KEY(movie_id, genre_id)
 );
 
 CREATE TABLE IF NOT EXISTS moviecast (
-    movie_id INTEGER NOT NULL REFERENCES moviedetail (id),
+    movie_id INTEGER NOT NULL REFERENCES moviedetail (id) ON DELETE CASCADE,
     cast_id INTEGER NOT NULL REFERENCES castinfo (id),
     PRIMARY KEY(movie_id, cast_id)
 );
