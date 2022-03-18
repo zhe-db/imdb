@@ -43,6 +43,8 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
       .ask(CreateUser(user, _))
   def deleteUser(name: String): Future[ActionPerformed] =
     userRegistry.ask(DeleteUser(name, _))
+  def updateUserLastLogin(userId: java.util.UUID): Future[ActionPerformed] =
+    userRegistry.ask(UpdateUserLastLogin(userId, _))
 
   //#all-routes
   //#users-get-post
@@ -73,6 +75,17 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
         },
         //#users-get-delete
         //#users-get-post
+        pathPrefix("login") {
+          get {
+            authenticateBasicAsync(
+              realm = "secure",
+              Authenticator.UserAuthenticatorAsync
+            ) { user =>
+              updateUserLastLogin(user.userId)
+              complete(user)
+            }
+          }
+        },
         path(Segment) { email =>
           concat(
             get {
@@ -89,8 +102,8 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
                   else {
                     complete(
                       HttpResponse(
-                        StatusCodes.BadRequest,
-                        entity = "No Access Allowed"
+                        StatusCodes.Forbidden,
+                        entity = "No Access To That Profile"
                       )
                     )
                   }
@@ -101,8 +114,21 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
             },
             delete {
               //#users-delete-logic
-              onSuccess(deleteUser(email)) { performed =>
-                complete((StatusCodes.OK, performed))
+              authenticateBasicAsync(
+                realm = "secure",
+                Authenticator.UserAuthenticatorAsync
+              ) { user =>
+                if (user.email == email)
+                  onSuccess(deleteUser(email)) { performed =>
+                    complete((StatusCodes.OK, performed))
+                  }
+                else
+                  complete(
+                    HttpResponse(
+                      StatusCodes.Forbidden,
+                      entity = "No Access To That Profile"
+                    )
+                  )
               }
               //#users-delete-logic
             }

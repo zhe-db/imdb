@@ -16,6 +16,10 @@ trait UserRepositoryComponent {
   def get(account_uuid: java.util.UUID): Future[Option[User]]
   def get(account_email: String): Future[Option[User]]
   def getUsers(): Future[Seq[User]]
+  def updateLastLogin(
+      userId: java.util.UUID,
+      lastLogin: java.sql.Timestamp
+  ): Future[Int]
 }
 
 class UserRepository(db: Database) extends UserRepositoryComponent {
@@ -31,6 +35,13 @@ class UserRepository(db: Database) extends UserRepositoryComponent {
     Users
       .filter(_.userId === user.userId)
       .update(user)
+  }
+
+  override def updateLastLogin(
+      userId: java.util.UUID,
+      lastLogin: java.sql.Timestamp
+  ): Future[Int] = db.run {
+    Users.filter(_.userId === userId).map(_.lastLogin).update(Some(lastLogin))
   }
 
   override def deleteBy(email: String): Future[Int] =

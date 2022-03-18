@@ -8,6 +8,8 @@ import scala.collection.immutable
 import slick.jdbc.JdbcBackend.Database
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Success}
+import java.sql.Timestamp
+import java.time.Instant
 
 import edu.duke.compsci516.models.entity.{User, Users}
 import edu.duke.compsci516.components.DatabaseComponent
@@ -25,6 +27,10 @@ object UserRegistry extends DatabaseComponent {
       extends Command
   final case class DeleteUser(email: String, replyTo: ActorRef[ActionPerformed])
       extends Command
+  final case class UpdateUserLastLogin(
+      userId: java.util.UUID,
+      replyTo: ActorRef[ActionPerformed]
+  ) extends Command
 
   final case class GetUserResponse(maybeUser: Option[User])
   final case class CreateUserResponse(maybeUser: Option[User])
@@ -61,6 +67,15 @@ object UserRegistry extends DatabaseComponent {
             replyTo ! ActionPerformed(s"User ${email} deleted.")
           case Failure(f) => replyTo ! ActionPerformed(s"Failed: ${f}")
         }
+        registry()
+      case UpdateUserLastLogin(userId, replyTo) =>
+        userRepo
+          .updateLastLogin(userId, Timestamp.from(Instant.now()))
+          .onComplete {
+            case Success(rows) =>
+              replyTo ! ActionPerformed(s"User ${userId} last login updated.")
+            case Failure(f) => replyTo ! ActionPerformed(s"Failed: ${f}")
+          }
         registry()
     }
 }
