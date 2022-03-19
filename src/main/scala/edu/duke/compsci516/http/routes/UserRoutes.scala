@@ -60,7 +60,6 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
                 realm = "secure",
                 Authenticator.UserAuthenticatorAsync
               ) { user =>
-                println(user)
                 complete(getUsers())
               }
             },

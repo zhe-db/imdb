@@ -10,8 +10,8 @@ import scala.util.Failure
 import scala.util.Success
 
 import edu.duke.compsci516.components._
-import edu.duke.compsci516.http.services.UserRegistry
-import edu.duke.compsci516.http.routes.UserRoutes
+import edu.duke.compsci516.http.services._
+import edu.duke.compsci516.http.routes._
 
 //#main-class
 object App extends ConfigComponent with DatabaseComponent {
@@ -45,10 +45,16 @@ object App extends ConfigComponent with DatabaseComponent {
     val rootBehavior = Behaviors.setup[Nothing] { context =>
       val userRegistryActor =
         context.spawn(UserRegistry(), "UserRegistryActor")
-      context.watch(userRegistryActor)
+      val genreRegistryActor =
+        context.spawn(GenreRegistry(), "GenreRegistryActor")
 
-      val routes = new UserRoutes(userRegistryActor)(context.system)
-      startHttpServer(routes.userRoutes)(context.system)
+      context.watch(userRegistryActor)
+      context.watch(genreRegistryActor)
+
+      val userRoutes = new UserRoutes(userRegistryActor)(context.system)
+      val genreRoutes = new GenreRoutes(genreRegistryActor)(context.system)
+      val routes = concat(userRoutes.userRoutes, genreRoutes.genreRoutes)
+      startHttpServer(routes)(context.system)
 
       Behaviors.empty
     }

@@ -10,7 +10,7 @@ import edu.duke.compsci516.models.database.UserTable
 
 trait UserRepositoryComponent {
   def add(account: User): Future[java.util.UUID]
-  def update(account: User): Future[Int]
+  def updateUsername(email: String, username: String): Future[Int]
   def deleteBy(account_email: String): Future[Int]
   def deleteBy(account_uuid: java.util.UUID): Future[Int]
   def get(account_uuid: java.util.UUID): Future[Option[User]]
@@ -31,11 +31,13 @@ class UserRepository(db: Database) extends UserRepositoryComponent {
     (Users returning Users.map(_.userId)) += user
   }
 
-  override def update(user: User): Future[Int] = db.run {
-    Users
-      .filter(_.userId === user.userId)
-      .update(user)
-  }
+  override def updateUsername(email: String, username: String): Future[Int] =
+    db.run {
+      Users
+        .filter(_.email === email)
+        .map(_.name)
+        .update(username)
+    }
 
   override def updateLastLogin(
       userId: java.util.UUID,

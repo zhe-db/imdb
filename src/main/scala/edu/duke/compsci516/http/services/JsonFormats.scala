@@ -1,7 +1,6 @@
 package edu.duke.compsci516.http.services
 
-import edu.duke.compsci516.http.services.UserRegistry.ActionPerformed
-import edu.duke.compsci516.models.entity.{User, Users, APIUser}
+import edu.duke.compsci516.models.entity._
 
 import spray.json.DefaultJsonProtocol
 import spray.json.JsonFormat
@@ -36,5 +35,12 @@ object JsonFormats {
   implicit val userJsonFormat = jsonFormat6(User)
   implicit val usersJsonFormat = jsonFormat1(Users)
   implicit val apiUserJsonFormat = jsonFormat3(APIUser)
-  implicit val actionPerformedJsonFormat = jsonFormat1(ActionPerformed)
+  implicit val userActionPerformedJsonFormat = jsonFormat1(
+    UserRegistry.ActionPerformed
+  )
+  implicit val genreActionPerformedJsonFormat = jsonFormat1(
+    GenreRegistry.ActionPerformed
+  )
+  implicit val genreJsonFormat = jsonFormat2(Genre)
+  implicit val genresJsonFormat = jsonFormat1(Genres)
 }

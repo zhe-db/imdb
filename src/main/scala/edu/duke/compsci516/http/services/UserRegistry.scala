@@ -36,9 +36,7 @@ object UserRegistry extends DatabaseComponent {
   final case class CreateUserResponse(maybeUser: Option[User])
   final case class ActionPerformed(description: String)
 
-  def apply(): Behavior[Command] = registry()
-
-  private def registry(): Behavior[Command] =
+  def apply(): Behavior[Command] =
     Behaviors.receiveMessage {
       case GetUsers(replyTo) =>
         userRepo.getUsers().onComplete {
@@ -47,27 +45,30 @@ object UserRegistry extends DatabaseComponent {
           case Failure(f) => replyTo ! Users(Seq.empty[User])
         }
         Behaviors.same
+
       case CreateUser(user, replyTo) =>
         userRepo.add(user).onComplete {
           case Success(_) =>
             replyTo ! CreateUserResponse(Some(user))
           case Failure(f) => CreateUserResponse(None)
         }
-        registry()
+        Behaviors.same
+
       case GetUser(email, replyTo) =>
         userRepo.get(email).onComplete {
           case Success(user) => replyTo ! GetUserResponse(user)
           case Failure(f)    => replyTo ! GetUserResponse(None)
         }
-        // replyTo ! GetUserResponse(users.find(_.name == name))
         Behaviors.same
+
       case DeleteUser(email, replyTo) =>
         userRepo.deleteBy(email).onComplete {
           case Success(rows) =>
             replyTo ! ActionPerformed(s"User ${email} deleted.")
           case Failure(f) => replyTo ! ActionPerformed(s"Failed: ${f}")
         }
-        registry()
+        Behaviors.same
+
       case UpdateUserLastLogin(userId, replyTo) =>
         userRepo
           .updateLastLogin(userId, Timestamp.from(Instant.now()))
@@ -76,7 +77,7 @@ object UserRegistry extends DatabaseComponent {
               replyTo ! ActionPerformed(s"User ${userId} last login updated.")
             case Failure(f) => replyTo ! ActionPerformed(s"Failed: ${f}")
           }
-        registry()
+        Behaviors.same
     }
 }
 //#user-registry-actor
