@@ -14,6 +14,7 @@ import akka.util.Timeout
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
 import edu.duke.compsci516.models.entity.{Genre, Genres}
 import edu.duke.compsci516.http.services._
@@ -44,53 +45,55 @@ class GenreRoutes(genreRegistry: ActorRef[GenreRegistry.Command])(implicit
     genreRegistry.ask(UpdateGenre(genre, _))
 
   val genreRoutes: Route =
-    pathPrefix("genres") {
-      concat(
-        pathEnd {
-          concat(
-            get {
-              authenticateBasicAsync(
-                realm = "secure",
-                Authenticator.UserAuthenticatorAsync
-              ) { user =>
-                complete(getGenres())
-              }
-            },
-            post {
-              entity(as[Genre]) { genre =>
-                onSuccess(addGenre(genre)) { response =>
-                  complete((StatusCodes.Created, response.maybeGenre))
+    cors() {
+      pathPrefix("genres") {
+        concat(
+          pathEnd {
+            concat(
+              get {
+                authenticateBasicAsync(
+                  realm = "secure",
+                  Authenticator.UserAuthenticatorAsync
+                ) { user =>
+                  complete(getGenres())
+                }
+              },
+              post {
+                entity(as[Genre]) { genre =>
+                  onSuccess(addGenre(genre)) { response =>
+                    complete((StatusCodes.Created, response.maybeGenre))
+                  }
+                }
+              },
+              put {
+                entity(as[Genre]) { genre =>
+                  onSuccess(updateGenre(genre)) { performed =>
+                    complete((StatusCodes.OK, performed))
+                  }
                 }
               }
-            },
-            put {
-              entity(as[Genre]) { genre =>
-                onSuccess(updateGenre(genre)) { performed =>
-                  complete((StatusCodes.OK, performed))
+            )
+          },
+          path(Segment) { genreId =>
+            concat(
+              get {
+                onSuccess(getGenre(genreId.toInt)) { response =>
+                  complete((StatusCodes.OK, response.maybeGenre))
+                }
+              },
+              delete {
+                authenticateBasicAsync(
+                  realm = "secure",
+                  Authenticator.UserAuthenticatorAsync
+                ) { user =>
+                  onSuccess(deleteGenre(genreId.toInt)) { performed =>
+                    complete((StatusCodes.OK, performed))
+                  }
                 }
               }
-            }
-          )
-        },
-        path(Segment) { genreId =>
-          concat(
-            get {
-              onSuccess(getGenre(genreId.toInt)) { response =>
-                complete((StatusCodes.OK, response.maybeGenre))
-              }
-            },
-            delete {
-              authenticateBasicAsync(
-                realm = "secure",
-                Authenticator.UserAuthenticatorAsync
-              ) { user =>
-                onSuccess(deleteGenre(genreId.toInt)) { performed =>
-                  complete((StatusCodes.OK, performed))
-                }
-              }
-            }
-          )
-        }
-      )
+            )
+          }
+        )
+      }
     }
 }
