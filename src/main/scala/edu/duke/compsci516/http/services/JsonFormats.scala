@@ -32,6 +32,16 @@ object JsonFormats {
     }
   }
 
+  implicit object SqlDateFormat extends JsonFormat[java.sql.Date] {
+    def write(obj: java.sql.Date) = JsString(obj.toString())
+    def read(json: JsValue) = {
+      json match {
+        case JsString(date) => java.sql.Date.valueOf(date)
+        case _ => throw new DeserializationException("Date expected")
+      }
+    }
+  }
+
   implicit val userJsonFormat = jsonFormat6(User)
   implicit val usersJsonFormat = jsonFormat1(Users)
   implicit val apiUserJsonFormat = jsonFormat3(APIUser)
@@ -43,4 +53,7 @@ object JsonFormats {
   )
   implicit val genreJsonFormat = jsonFormat2(Genre)
   implicit val genresJsonFormat = jsonFormat1(Genres)
+  implicit val apiUserRatingJsonFormat = jsonFormat3(APIUserRating)
+  implicit val userRatingJsonFormat = jsonFormat4(UserRating)
+  implicit val movieDetailRowJsonFormat = jsonFormat13(MovieDetailRow)
 }

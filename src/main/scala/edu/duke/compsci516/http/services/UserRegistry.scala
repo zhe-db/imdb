@@ -11,13 +11,15 @@ import scala.util.{Failure, Success}
 import java.sql.Timestamp
 import java.time.Instant
 
-import edu.duke.compsci516.models.entity.{User, Users}
+import edu.duke.compsci516.models.entity._
 import edu.duke.compsci516.components.DatabaseComponent
 import edu.duke.compsci516.models.components.UserRepository
+import edu.duke.compsci516.models.components.UserRateMovieRepository
 
 object UserRegistry extends DatabaseComponent {
   // actor protocol
   private val userRepo = new UserRepository(this.db)
+  private val userRatingRepo = new UserRateMovieRepository(this.db)
 
   sealed trait Command
   final case class GetUsers(replyTo: ActorRef[Users]) extends Command
@@ -31,10 +33,26 @@ object UserRegistry extends DatabaseComponent {
       userId: java.util.UUID,
       replyTo: ActorRef[ActionPerformed]
   ) extends Command
+  final case class EditUserMovieRating(
+      rating: APIUserRating,
+      replyTo: ActorRef[EditUserMovieRatingResponse]
+  ) extends Command
+
+  final case class RateMovie(
+      userRating: UserRating,
+      replyTo: ActorRef[CreateUserMovieRatingResponse]
+  ) extends Command
 
   final case class GetUserResponse(maybeUser: Option[User])
   final case class CreateUserResponse(maybeUser: Option[User])
   final case class ActionPerformed(description: String)
+
+  final case class CreateUserMovieRatingResponse(
+      maybeRating: Option[UserRating]
+  )
+  final case class EditUserMovieRatingResponse(
+      maybeRating: Option[APIUserRating]
+  )
 
   def apply(): Behavior[Command] =
     Behaviors.receiveMessage {
@@ -77,6 +95,24 @@ object UserRegistry extends DatabaseComponent {
               replyTo ! ActionPerformed(s"User ${userId} last login updated.")
             case Failure(f) => replyTo ! ActionPerformed(s"Failed: ${f}")
           }
+        Behaviors.same
+
+      case RateMovie(userRating, replyTo) =>
+        userRatingRepo.add(userRating).onComplete {
+          case Success(rating) =>
+            replyTo ! CreateUserMovieRatingResponse(Some(rating))
+          case Failure(f) =>
+            replyTo ! CreateUserMovieRatingResponse(None)
+        }
+        Behaviors.same
+
+      case EditUserMovieRating(userRating, replyTo) =>
+        userRatingRepo.editRating(userRating).onComplete {
+          case Success(rating) =>
+            replyTo ! EditUserMovieRatingResponse(Some(userRating))
+          case Failure(f) =>
+            replyTo ! EditUserMovieRatingResponse(None)
+        }
         Behaviors.same
     }
 }

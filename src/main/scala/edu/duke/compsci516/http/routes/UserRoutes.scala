@@ -16,10 +16,11 @@ import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import edu.duke.compsci516.models.entity.{User, Users, APIUser}
+import edu.duke.compsci516.models.entity._
 import edu.duke.compsci516.http.services._
 import edu.duke.compsci516.http.services.UserRegistry._
 import edu.duke.compsci516.http.services.Authenticator
+import edu.duke.compsci516.models.entity.UserRating
 
 class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
     val system: ActorSystem[_]
@@ -46,6 +47,14 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
     userRegistry.ask(DeleteUser(name, _))
   def updateUserLastLogin(userId: java.util.UUID): Future[ActionPerformed] =
     userRegistry.ask(UpdateUserLastLogin(userId, _))
+  def createUserRating(
+      rating: UserRating
+  ): Future[CreateUserMovieRatingResponse] =
+    userRegistry.ask(RateMovie(rating, _))
+  def editUserRating(
+      rating: APIUserRating
+  ): Future[EditUserMovieRatingResponse] =
+    userRegistry.ask(EditUserMovieRating(rating, _))
 
   //#all-routes
   //#users-get-post
@@ -134,9 +143,31 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
                 //#users-delete-logic
               }
             )
+          },
+          pathPrefix("rating") {
+            pathEnd {
+              concat(
+                post {
+                  entity(as[APIUserRating]) { rating =>
+                    onSuccess(createUserRating(rating.toUserRating())) {
+                      response =>
+                        complete((StatusCodes.Created, response.maybeRating))
+                    }
+                  }
+                },
+                put {
+                  entity(as[APIUserRating]) { rating =>
+                    onSuccess(editUserRating(rating)) { response =>
+                      complete((StatusCodes.OK, response.maybeRating))
+                    }
+                  }
+                }
+              )
+            }
           }
         )
         //#users-get-delete
+
       }
       //#all-routes
     }
