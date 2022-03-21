@@ -44,30 +44,19 @@ case class MovieDetailRow(
     voteAverage: Option[Double] = None
 )
 
-case class Movie(
-    id: Int,
-    adult: Boolean,
-    backdropPath: Option[String] = None,
-    budget: Option[Int] = None,
-    imdbId: String,
-    title: String,
-    overview: Option[String] = None,
-    popularity: Option[Double] = None,
-    posterPath: Option[String] = None,
-    releaseDate: Option[java.sql.Date] = None,
-    runtime: Option[Int] = None,
-    revenue: Option[Int] = None,
-    voteAverage: Option[Double] = None
-)
-
 /** Entity class storing rows of table Moviegenre
   * @param movieId
   *   Database column movie_id SqlType(int4)
   * @param genreId
   *   Database column genre_id SqlType(int4)
   */
+
+case class APIMovie(movie: MovieDetailRow, genres: Seq[Genre])
+
 case class MovieGenre(movieId: Int, genreId: Int)
 
 case class Genre(id: Int, name: String)
 
 case class Genres(genres: Seq[Genre])
+
+case class MovieCrew(movieId: Int, crewId: Int, types: Option[String] = None)

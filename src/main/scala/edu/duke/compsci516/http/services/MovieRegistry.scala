@@ -10,8 +10,9 @@ import scala.util.{Failure, Success}
 import java.sql.Timestamp
 import java.time.Instant
 
-import edu.duke.compsci516.models.entity.Movie
+import edu.duke.compsci516.models.entity.APIMovie
 import edu.duke.compsci516.components.DatabaseComponent
+import edu.duke.compsci516.models.entity.MovieDetailRow
 
 object MovieRegistry extends DatabaseComponent {
   private val movieRpo = None
@@ -22,5 +23,8 @@ object MovieRegistry extends DatabaseComponent {
       replyTo: ActorRef[GetMovieResponse]
   ) extends Command
 
-  final case class GetMovieResponse(maybeMovie: Option[Movie])
+  final case class AddMove(movie: MovieDetailRow) extends Command
+
+  final case class GetMovieResponse(maybeMovie: Option[APIMovie])
+
 }
