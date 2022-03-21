@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS moviedetail (
     vote_average FLOAT
 );
 
-CREATE TABLE IF NOT EXISTS People_info (
+CREATE TABLE IF NOT EXISTS crewdetail (
     id INTEGER NOT NULL PRIMARY KEY,
     birthday DATE,
     know_for_department TEXT,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS People_info (
 );
 
 CREATE TABLE IF NOT EXISTS userratings (
-    rating_uuid uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     user_id uuid NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     movie_id INTEGER REFERENCES moviedetail (id) ON DELETE CASCADE,
     rates FLOAT,
@@ -47,24 +47,23 @@ CREATE TABLE IF NOT EXISTS userratings (
 );
 
 CREATE TABLE IF NOT EXISTS userfavmovie (
-    favourite_uuid uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     user_id uuid NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     movie_id INTEGER REFERENCES moviedetail (id) ON DELETE CASCADE,
     CONSTRAINT per_user_movie UNIQUE (user_id, movie_id)
 );
 
 CREATE TABLE IF NOT EXISTS userfavactor (
-    actor_like_uuid uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     user_id uuid NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
-    actor_id INTEGER REFERENCES People_info (id) ON DELETE CASCADE,
+    actor_id INTEGER REFERENCES crewdetail (id) ON DELETE CASCADE,
     CONSTRAINT per_user_actor UNIQUE (user_id, actor_id)
 );
 
 CREATE TABLE IF NOT EXISTS userview (
-    view_uuid uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     user_id uuid NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     movie_id INTEGER REFERENCES moviedetail (id) ON DELETE CASCADE,
-    time TIMESTAMP,
     CONSTRAINT per_user_view UNIQUE (user_id, movie_id)
 );
 
@@ -79,15 +78,15 @@ CREATE TABLE IF NOT EXISTS moviegenre (
     PRIMARY KEY(movie_id, genre_id)
 );
 
-CREATE TABLE IF NOT EXISTS Movie_People (
+CREATE TABLE IF NOT EXISTS moviecrew (
     movie_id INTEGER NOT NULL REFERENCES moviedetail (id) ON DELETE CASCADE,
-    id INTEGER NOT NULL REFERENCES People_info (id),
+    crew_id INTEGER NOT NULL REFERENCES crewdetail (id),
     types TEXT,
-    PRIMARY KEY(movie_id, id)
+    PRIMARY KEY(movie_id, crew_id)
 );
 
 CREATE TABLE IF NOT EXISTS userreview (
-    review_uuid uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
+    id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     user_id uuid NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     movie_id INTEGER REFERENCES moviedetail (id) ON DELETE CASCADE,
     contents TEXT,
