@@ -52,3 +52,9 @@ case class APIUser(
     )
   }
 }
+
+case class UserFavouriteCrew(
+    id: java.util.UUID,
+    userId: java.util.UUID,
+    crewId: Option[Int] = None
+)
