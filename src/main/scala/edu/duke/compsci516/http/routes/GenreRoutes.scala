@@ -45,7 +45,6 @@ class GenreRoutes(genreRegistry: ActorRef[GenreRegistry.Command])(implicit
     genreRegistry.ask(UpdateGenre(genre, _))
 
   val genreRoutes: Route =
-    cors() {
       pathPrefix("genres") {
         concat(
           pathEnd {
@@ -95,5 +94,4 @@ class GenreRoutes(genreRegistry: ActorRef[GenreRegistry.Command])(implicit
           }
         )
       }
-    }
 }

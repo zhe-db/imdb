@@ -64,3 +64,62 @@ case class UserFavouriteMovie(
     userId: java.util.UUID,
     movieId: Option[Int] = None
 )
+
+/** Entity class storing rows of table Userratings
+  * @param id
+  *   Database column id SqlType(uuid), PrimaryKey
+  * @param userId
+  *   Database column user_id SqlType(uuid)
+  * @param movieId
+  *   Database column movie_id SqlType(int4), Default(None)
+  * @param rating
+  *   Database column rating SqlType(float8), Default(None)
+  */
+case class UserRating(
+    id: java.util.UUID,
+    userId: java.util.UUID,
+    movieId: Option[Int] = None,
+    rating: Option[Double] = None
+)
+
+case class APIUserRating(
+    userId: java.util.UUID,
+    movieId: Option[Int] = None,
+    rating: Option[Double] = None
+) {
+  def toUserRating(): UserRating = {
+    val id: java.util.UUID = randomUUID
+    return UserRating(id, userId, movieId, rating)
+  }
+}
+
+/** Entity class storing rows of table Userreview
+  * @param id
+  *   Database column id SqlType(uuid), PrimaryKey
+  * @param userId
+  *   Database column user_id SqlType(uuid)
+  * @param movieId
+  *   Database column movie_id SqlType(int4), Default(None)
+  * @param contents
+  *   Database column contents SqlType(text), Default(None)
+  */
+case class UserReview(
+    id: java.util.UUID,
+    userId: java.util.UUID,
+    movieId: Option[Int] = None,
+    contents: Option[String] = None
+)
+
+/** Entity class storing rows of table Userview
+  * @param id
+  *   Database column id SqlType(uuid), PrimaryKey
+  * @param userId
+  *   Database column user_id SqlType(uuid)
+  * @param movieId
+  *   Database column movie_id SqlType(int4), Default(None)
+  */
+case class UserView(
+    id: java.util.UUID,
+    userId: java.util.UUID,
+    movieId: Option[Int] = None
+)

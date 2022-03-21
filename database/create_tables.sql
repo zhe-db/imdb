@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS userratings (
     id uuid DEFAULT uuid_generate_v4() PRIMARY KEY,
     user_id uuid NOT NULL REFERENCES users (user_id) ON DELETE CASCADE,
     movie_id INTEGER REFERENCES moviedetail (id) ON DELETE CASCADE,
-    rates FLOAT,
+    rating FLOAT,
     CONSTRAINT per_user_rating UNIQUE (user_id, movie_id)
 );
 

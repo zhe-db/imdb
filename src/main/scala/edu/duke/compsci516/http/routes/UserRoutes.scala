@@ -11,7 +11,6 @@ import akka.http.scaladsl.model.headers._
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.directives.Credentials
 import akka.util.Timeout
-import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -60,115 +59,113 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
   //#users-get-post
   //#users-get-delete
   val userRoutes: Route =
-    cors() {
-      pathPrefix("users") {
-        concat(
-          //#users-get-delete
-          pathEnd {
-            concat(
-              get {
-                authenticateBasicAsync(
-                  realm = "secure",
-                  Authenticator.UserAuthenticatorAsync
-                ) { user =>
-                  complete(getUsers())
-                }
-              },
-              post {
-                entity(as[APIUser]) { user =>
-                  onSuccess(createUser(user.toUser())) { response =>
-                    complete((StatusCodes.Created, response.maybeUser))
-                  }
-                }
-              }
-            )
-          },
-          //#users-get-delete
-          //#users-get-post
-          pathPrefix("login") {
+    pathPrefix("users") {
+      concat(
+        //#users-get-delete
+        pathEnd {
+          concat(
             get {
               authenticateBasicAsync(
                 realm = "secure",
                 Authenticator.UserAuthenticatorAsync
               ) { user =>
-                updateUserLastLogin(user.userId)
-                complete(user)
+                complete(getUsers())
+              }
+            },
+            post {
+              entity(as[APIUser]) { user =>
+                onSuccess(createUser(user.toUser())) { response =>
+                  complete((StatusCodes.Created, response.maybeUser))
+                }
               }
             }
-          },
-          path(Segment) { email =>
-            concat(
-              get {
-                //#retrieve-user-info
-                rejectEmptyResponse {
-                  authenticateBasicAsync(
-                    realm = "secure",
-                    Authenticator.UserAuthenticatorAsync
-                  ) { user =>
-                    if (user.email == email)
-                      onSuccess(getUser(email)) { response =>
-                        complete(response.maybeUser)
-                      }
-                    else {
-                      complete(
-                        HttpResponse(
-                          StatusCodes.Forbidden,
-                          entity = "No Access To That Profile"
-                        )
-                      )
-                    }
-
-                  }
-                }
-                //#retrieve-user-info
-              },
-              delete {
-                //#users-delete-logic
+          )
+        },
+        //#users-get-delete
+        //#users-get-post
+        pathPrefix("login") {
+          get {
+            authenticateBasicAsync(
+              realm = "secure",
+              Authenticator.UserAuthenticatorAsync
+            ) { user =>
+              updateUserLastLogin(user.userId)
+              complete(user)
+            }
+          }
+        },
+        path(Segment) { email =>
+          concat(
+            get {
+              //#retrieve-user-info
+              rejectEmptyResponse {
                 authenticateBasicAsync(
                   realm = "secure",
                   Authenticator.UserAuthenticatorAsync
                 ) { user =>
                   if (user.email == email)
-                    onSuccess(deleteUser(email)) { performed =>
-                      complete((StatusCodes.OK, performed))
+                    onSuccess(getUser(email)) { response =>
+                      complete(response.maybeUser)
                     }
-                  else
+                  else {
                     complete(
                       HttpResponse(
                         StatusCodes.Forbidden,
                         entity = "No Access To That Profile"
                       )
                     )
+                  }
+
                 }
-                //#users-delete-logic
+              }
+              //#retrieve-user-info
+            },
+            delete {
+              //#users-delete-logic
+              authenticateBasicAsync(
+                realm = "secure",
+                Authenticator.UserAuthenticatorAsync
+              ) { user =>
+                if (user.email == email)
+                  onSuccess(deleteUser(email)) { performed =>
+                    complete((StatusCodes.OK, performed))
+                  }
+                else
+                  complete(
+                    HttpResponse(
+                      StatusCodes.Forbidden,
+                      entity = "No Access To That Profile"
+                    )
+                  )
+              }
+              //#users-delete-logic
+            }
+          )
+        },
+        pathPrefix("rating") {
+          pathEnd {
+            concat(
+              post {
+                entity(as[APIUserRating]) { rating =>
+                  onSuccess(createUserRating(rating.toUserRating())) {
+                    response =>
+                      complete((StatusCodes.Created, response.maybeRating))
+                  }
+                }
+              },
+              put {
+                entity(as[APIUserRating]) { rating =>
+                  onSuccess(editUserRating(rating)) { response =>
+                    complete((StatusCodes.OK, response.maybeRating))
+                  }
+                }
               }
             )
-          },
-          pathPrefix("rating") {
-            pathEnd {
-              concat(
-                post {
-                  entity(as[APIUserRating]) { rating =>
-                    onSuccess(createUserRating(rating.toUserRating())) {
-                      response =>
-                        complete((StatusCodes.Created, response.maybeRating))
-                    }
-                  }
-                },
-                put {
-                  entity(as[APIUserRating]) { rating =>
-                    onSuccess(editUserRating(rating)) { response =>
-                      complete((StatusCodes.OK, response.maybeRating))
-                    }
-                  }
-                }
-              )
-            }
           }
-        )
-        //#users-get-delete
+        }
+      )
+      //#users-get-delete
 
-      }
-      //#all-routes
     }
+  //#all-routes
 }
