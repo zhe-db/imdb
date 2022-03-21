@@ -58,3 +58,9 @@ case class UserFavouriteCrew(
     userId: java.util.UUID,
     crewId: Option[Int] = None
 )
+
+case class UserFavouriteMovie(
+    id: java.util.UUID,
+    userId: java.util.UUID,
+    movieId: Option[Int] = None
+)

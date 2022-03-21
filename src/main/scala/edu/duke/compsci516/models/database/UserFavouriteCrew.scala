@@ -24,7 +24,7 @@ trait UserFavouriteCrewTableTrait {
   import userTable.Users
   import crewTable.CrewRows
 
-  lazy val schema: profile.SchemaDescription = UserFavouriteCrewTableRows.schema
+  lazy val schema: profile.SchemaDescription = UserFavouriteCrewRows.schema
   def ddl = schema
 
   implicit def GetResultUserfavactorRow(implicit
@@ -89,7 +89,5 @@ trait UserFavouriteCrewTableTrait {
   }
 
   /** Collection-like TableQuery object for table Userfavactor */
-  lazy val UserFavouriteCrewTableRows = new TableQuery(tag =>
-    new Userfavactor(tag)
-  )
+  lazy val UserFavouriteCrewRows = new TableQuery(tag => new Userfavactor(tag))
 }
