@@ -29,6 +29,7 @@ object Library {
     "ch.qos.logback" % "logback-classic" % Version.logbackClassic
   val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest % Test
   val codec = "commons-codec" % "commons-codec" % "1.15"
+  val cors = "ch.megard" %% "akka-http-cors" % "1.1.3"
 }
 
 object Dependencies {
@@ -49,7 +50,8 @@ object Dependencies {
     akkaHttpJson4s,
     logbackClassic,
     scalaTest,
-    codec
+    codec,
+    cors
   )
 
 }

@@ -5,6 +5,7 @@ import akka.actor.typed.scaladsl.Behaviors
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route
 import akka.http.scaladsl.server.Directives._
+import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
 import scala.util.Failure
 import scala.util.Success
@@ -39,10 +40,12 @@ object App extends ConfigComponent with DatabaseComponent {
         system.terminate()
     }
   }
+
   //#start-http-server
   def main(args: Array[String]): Unit = {
     //#server-bootstrapping
     val rootBehavior = Behaviors.setup[Nothing] { context =>
+
       val userRegistryActor =
         context.spawn(UserRegistry(), "UserRegistryActor")
       val genreRegistryActor =
@@ -53,7 +56,7 @@ object App extends ConfigComponent with DatabaseComponent {
 
       val userRoutes = new UserRoutes(userRegistryActor)(context.system)
       val genreRoutes = new GenreRoutes(genreRegistryActor)(context.system)
-      val routes = concat(userRoutes.userRoutes, genreRoutes.genreRoutes)
+      val routes = cors() {concat(userRoutes.userRoutes, genreRoutes.genreRoutes)}
       startHttpServer(routes)(context.system)
 
       Behaviors.empty
