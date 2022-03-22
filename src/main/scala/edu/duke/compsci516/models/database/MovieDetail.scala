@@ -44,10 +44,17 @@ trait MovieDetailTableTrait {
         <<?[java.sql.Date],
         <<?[Int],
         <<?[Int],
-        <<?[Double]
+        <<?[Double],
+        <<?[String],
+        <<?[Int],
+        <<?[String]
       )
     )
   }
+
+  /** Table description of table moviedetail. Objects of this class serve as
+    * prototypes for rows in queries.
+    */
   class Moviedetail(_tableTag: Tag)
       extends profile.api.Table[MovieDetailRow](_tableTag, "moviedetail") {
     def * = (
@@ -63,7 +70,10 @@ trait MovieDetailTableTrait {
       releaseDate,
       runtime,
       revenue,
-      voteAverage
+      voteAverage,
+      homepage,
+      voteCount,
+      tagline
     ) <> (MovieDetailRow.tupled, MovieDetailRow.unapply)
 
     /** Maps whole row to an option. Useful for outer joins. */
@@ -81,7 +91,10 @@ trait MovieDetailTableTrait {
         releaseDate,
         runtime,
         revenue,
-        voteAverage
+        voteAverage,
+        homepage,
+        voteCount,
+        tagline
       )
     ).shaped.<>(
       { r =>
@@ -101,7 +114,10 @@ trait MovieDetailTableTrait {
               _10,
               _11,
               _12,
-              _13
+              _13,
+              _14,
+              _15,
+              _16
             )
           )
         )
@@ -157,6 +173,18 @@ trait MovieDetailTableTrait {
     /** Database column vote_average SqlType(float8), Default(None) */
     val voteAverage: Rep[Option[Double]] =
       column[Option[Double]]("vote_average", O.Default(None))
+
+    /** Database column homepage SqlType(text), Default(None) */
+    val homepage: Rep[Option[String]] =
+      column[Option[String]]("homepage", O.Default(None))
+
+    /** Database column vote_count SqlType(int4), Default(None) */
+    val voteCount: Rep[Option[Int]] =
+      column[Option[Int]]("vote_count", O.Default(None))
+
+    /** Database column tagline SqlType(text), Default(None) */
+    val tagline: Rep[Option[String]] =
+      column[Option[String]]("tagline", O.Default(None))
   }
 
   /** Collection-like TableQuery object for table Moviedetail */

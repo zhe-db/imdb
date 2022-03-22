@@ -24,7 +24,8 @@ trait CrewTableTrait {
       e0: GR[Int],
       e1: GR[Option[java.sql.Date]],
       e2: GR[Option[String]],
-      e3: GR[String]
+      e3: GR[String],
+      e4: GR[Option[Int]]
   ): GR[Crew] = GR { prs =>
     import prs._
     Crew.tupled(
@@ -33,7 +34,9 @@ trait CrewTableTrait {
         <<?[java.sql.Date],
         <<?[String],
         <<[String],
-        <<[Int],
+        <<?[Int],
+        <<?[String],
+        <<?[String],
         <<?[String],
         <<?[String],
         <<?[String]
@@ -54,7 +57,9 @@ trait CrewTableTrait {
       gender,
       biography,
       placeOfBirth,
-      profilePath
+      profilePath,
+      homepage,
+      imdbId
     ) <> (Crew.tupled, Crew.unapply)
 
     /** Maps whole row to an option. Useful for outer joins. */
@@ -64,15 +69,21 @@ trait CrewTableTrait {
         birthday,
         knowForDepartment,
         Rep.Some(name),
-        Rep.Some(gender),
+        gender,
         biography,
         placeOfBirth,
-        profilePath
+        profilePath,
+        homepage,
+        imdbId
       )
     ).shaped.<>(
       { r =>
         import r._;
-        _1.map(_ => Crew.tupled((_1.get, _2, _3, _4.get, _5.get, _6, _7, _8)))
+        _1.map(_ =>
+          Crew.tupled(
+            (_1.get, _2, _3, _4.get, _5, _6, _7, _8, _9, _10)
+          )
+        )
       },
       (_: Any) =>
         throw new Exception("Inserting into ? projection not supported.")
@@ -92,8 +103,9 @@ trait CrewTableTrait {
     /** Database column name SqlType(text) */
     val name: Rep[String] = column[String]("name")
 
-    /** Database column gender SqlType(int4) */
-    val gender: Rep[Int] = column[Int]("gender")
+    /** Database column gender SqlType(int4), Default(None) */
+    val gender: Rep[Option[Int]] =
+      column[Option[Int]]("gender", O.Default(None))
 
     /** Database column biography SqlType(text), Default(None) */
     val biography: Rep[Option[String]] =
@@ -106,6 +118,14 @@ trait CrewTableTrait {
     /** Database column profile_path SqlType(text), Default(None) */
     val profilePath: Rep[Option[String]] =
       column[Option[String]]("profile_path", O.Default(None))
+
+    /** Database column homepage SqlType(text), Default(None) */
+    val homepage: Rep[Option[String]] =
+      column[Option[String]]("homepage", O.Default(None))
+
+    /** Database column imdb_id SqlType(int4), Default(None) */
+    val imdbId: Rep[Option[String]] =
+      column[Option[String]]("imdb_id", O.Default(None))
   }
 
   /** Collection-like TableQuery object for table Crewdetail */

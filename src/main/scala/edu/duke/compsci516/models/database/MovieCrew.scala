@@ -29,10 +29,23 @@ trait MovieCrewTableTrait {
 
   implicit def GetResultMoviecrewRow(implicit
       e0: GR[Int],
-      e1: GR[Option[String]]
+      e1: GR[Option[String]],
+      e2: GR[Option[Int]]
   ): GR[MovieCrew] = GR { prs =>
     import prs._
-    MovieCrew.tupled((<<[Int], <<[Int], <<?[String]))
+    MovieCrew.tupled(
+      (
+        <<[Int],
+        <<[Int],
+        <<?[String],
+        <<[Int],
+        <<?[String],
+        <<?[String],
+        <<?[String],
+        <<?[String],
+        <<?[Int]
+      )
+    )
   }
 
   /** Table description of table moviecrew. Objects of this class serve as
@@ -40,13 +53,37 @@ trait MovieCrewTableTrait {
     */
   class Moviecrew(_tableTag: Tag)
       extends profile.api.Table[MovieCrew](_tableTag, "moviecrew") {
-    def * =
-      (movieId, crewId, types) <> (MovieCrew.tupled, MovieCrew.unapply)
+    def * = (
+      movieId,
+      crewId,
+      types,
+      castId,
+      character,
+      job,
+      department,
+      creditId,
+      ordering
+    ) <> (MovieCrew.tupled, MovieCrew.unapply)
 
     /** Maps whole row to an option. Useful for outer joins. */
-    def ? = ((Rep.Some(movieId), Rep.Some(crewId), types)).shaped.<>(
+    def ? = (
+      (
+        Rep.Some(movieId),
+        Rep.Some(crewId),
+        types,
+        Rep.Some(castId),
+        character,
+        job,
+        department,
+        creditId,
+        ordering
+      )
+    ).shaped.<>(
       { r =>
-        import r._; _1.map(_ => MovieCrew.tupled((_1.get, _2.get, _3)))
+        import r._;
+        _1.map(_ =>
+          MovieCrew.tupled((_1.get, _2.get, _3, _4.get, _5, _6, _7, _8, _9))
+        )
       },
       (_: Any) =>
         throw new Exception("Inserting into ? projection not supported.")
@@ -61,6 +98,47 @@ trait MovieCrewTableTrait {
     /** Database column types SqlType(text), Default(None) */
     val types: Rep[Option[String]] =
       column[Option[String]]("types", O.Default(None))
+
+    /** Database column cast_id SqlType(int4) */
+    val castId: Rep[Int] = column[Int]("cast_id")
+
+    /** Database column character SqlType(varchar), Length(250,true),
+      * Default(None)
+      */
+    val character: Rep[Option[String]] = column[Option[String]](
+      "character",
+      O.Length(250, varying = true),
+      O.Default(None)
+    )
+
+    /** Database column job SqlType(varchar), Length(250,true), Default(None) */
+    val job: Rep[Option[String]] = column[Option[String]](
+      "job",
+      O.Length(250, varying = true),
+      O.Default(None)
+    )
+
+    /** Database column department SqlType(varchar), Length(250,true),
+      * Default(None)
+      */
+    val department: Rep[Option[String]] = column[Option[String]](
+      "department",
+      O.Length(250, varying = true),
+      O.Default(None)
+    )
+
+    /** Database column credit_id SqlType(varchar), Length(250,true),
+      * Default(None)
+      */
+    val creditId: Rep[Option[String]] = column[Option[String]](
+      "credit_id",
+      O.Length(250, varying = true),
+      O.Default(None)
+    )
+
+    /** Database column ordering SqlType(int4), Default(None) */
+    val ordering: Rep[Option[Int]] =
+      column[Option[Int]]("ordering", O.Default(None))
 
     /** Primary key of Moviecrew (database name moviecrew_pkey) */
     val pk = primaryKey("moviecrew_pkey", (movieId, crewId))

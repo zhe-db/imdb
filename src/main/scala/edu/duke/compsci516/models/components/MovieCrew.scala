@@ -5,8 +5,8 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
-import edu.duke.compsci516.models.entity.MovieCrew
-import edu.duke.compsci516.models.database.MovieCrewTable
+import _root_.edu.duke.compsci516.models.entity.MovieCrew
+import _root_.edu.duke.compsci516.models.database.MovieCrewTable
 
 trait MovieCrewRepositoryComponent {
   def add(movieCrew: MovieCrew): Future[Int]

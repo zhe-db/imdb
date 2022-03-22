@@ -41,7 +41,10 @@ case class MovieDetailRow(
     releaseDate: Option[java.sql.Date] = None,
     runtime: Option[Int] = None,
     revenue: Option[Int] = None,
-    voteAverage: Option[Double] = None
+    voteAverage: Option[Double] = None,
+    homepage: Option[String] = None,
+    voteCount: Option[Int] = None,
+    tagline: Option[String] = None
 )
 
 /** Entity class storing rows of table Moviegenre
@@ -59,4 +62,14 @@ case class Genre(id: Int, name: String)
 
 case class Genres(genres: Seq[Genre])
 
-case class MovieCrew(movieId: Int, crewId: Int, types: Option[String] = None)
+case class MovieCrew(
+    movieId: Int,
+    crewId: Int,
+    types: Option[String] = None,
+    castId: Int,
+    character: Option[String] = None,
+    job: Option[String] = None,
+    department: Option[String] = None,
+    creditId: Option[String] = None,
+    ordering: Option[Int] = None
+)
