@@ -24,7 +24,10 @@ CREATE TABLE IF NOT EXISTS moviedetail (
     release_date DATE,
     runtime INTEGER,
     revenue INTEGER,
-    vote_average FLOAT
+    vote_average FLOAT,
+    homepage TEXT,
+    vote_count INTEGER,
+    tagline TEXT
 );
 
 CREATE TABLE IF NOT EXISTS crewdetail (
@@ -32,10 +35,12 @@ CREATE TABLE IF NOT EXISTS crewdetail (
     birthday DATE,
     know_for_department TEXT,
     name TEXT NOT NULL,
-    gender INTEGER NOT NULL,
+    gender INTEGER,
     biography TEXT,
     place_of_birth TEXT,
-    profile_path TEXT
+    profile_path TEXT,
+    homepage TEXT,
+    imdb_id TEXT
 );
 
 CREATE TABLE IF NOT EXISTS userratings (
@@ -82,6 +87,12 @@ CREATE TABLE IF NOT EXISTS moviecrew (
     movie_id INTEGER NOT NULL REFERENCES moviedetail (id) ON DELETE CASCADE,
     crew_id INTEGER NOT NULL REFERENCES crewdetail (id),
     types TEXT,
+    cast_id INTEGER NOT NULL,
+    character varchar(250),
+    job varchar(250),
+    department varchar(250),
+    credit_id varchar(250),
+    ordering INTEGER,
     PRIMARY KEY(movie_id, crew_id)
 );
 

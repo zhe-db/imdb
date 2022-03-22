@@ -30,6 +30,7 @@ object Library {
   val scalaTest = "org.scalatest" %% "scalatest" % Version.scalaTest % Test
   val codec = "commons-codec" % "commons-codec" % "1.15"
   val cors = "ch.megard" %% "akka-http-cors" % "1.1.3"
+  val akkaStreamContrib = "com.typesafe.akka" %% "akka-stream-contrib" % "0.10"
 }
 
 object Dependencies {
@@ -51,7 +52,8 @@ object Dependencies {
     logbackClassic,
     scalaTest,
     codec,
-    cors
+    cors,
+    akkaStreamContrib
   )
 
 }
