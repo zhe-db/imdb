@@ -8,6 +8,7 @@ import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model.headers._
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 import ch.megard.akka.http.cors.scaladsl.model.HttpOriginMatcher
+import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
 
 import scala.util.Failure
 import scala.util.Success
@@ -15,11 +16,11 @@ import scala.util.Success
 import edu.duke.compsci516.components._
 import edu.duke.compsci516.http.services._
 import edu.duke.compsci516.http.routes._
+import edu.duke.compsci516.http.utils.CORSHandler
 import akka.http.javadsl.model.headers
-import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
 
 //#main-class
-object App extends ConfigComponent with DatabaseComponent {
+object App extends ConfigComponent with DatabaseComponent with CORSHandler {
   val host = config.getString("application.host")
   val port = config.getInt("application.port")
 
@@ -64,10 +65,12 @@ object App extends ConfigComponent with DatabaseComponent {
       val userRoutes = new UserRoutes(userRegistryActor)(context.system)
       val genreRoutes = new GenreRoutes(genreRegistryActor)(context.system)
       val movieRoutes = new MovieRoutes(movieRegistryActor)(context.system)
-      val corsSettings = CorsSettings.defaultSettings.withAllowedOrigins(
-        HttpOriginMatcher.*
-      ).withAllowCredentials(true)
-      val routes = cors(corsSettings) {
+      val corsSettings = CorsSettings.defaultSettings
+        .withAllowedOrigins(
+          HttpOriginMatcher.*
+        )
+        .withAllowCredentials(true)
+      val routes = corsHandler {
         concat(
           userRoutes.userRoutes,
           genreRoutes.genreRoutes,

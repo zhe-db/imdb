@@ -74,6 +74,7 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
             },
             post {
               entity(as[APIUser]) { user =>
+                println(user)
                 onSuccess(createUser(user.toUser())) { response =>
                   complete((StatusCodes.Created, response.maybeUser))
                 }

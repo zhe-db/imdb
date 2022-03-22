@@ -65,6 +65,7 @@ object UserRegistry extends DatabaseComponent {
         Behaviors.same
 
       case CreateUser(user, replyTo) =>
+        println(user)
         userRepo.add(user).onComplete {
           case Success(_) =>
             replyTo ! CreateUserResponse(Some(user))
