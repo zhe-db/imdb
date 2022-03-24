@@ -47,6 +47,8 @@ case class MovieDetailRow(
     tagline: Option[String] = None
 )
 
+case class MovieDetailRows(movies: Seq[MovieDetailRow])
+
 /** Entity class storing rows of table Moviegenre
   * @param movieId
   *   Database column movie_id SqlType(int4)
@@ -54,7 +56,21 @@ case class MovieDetailRow(
   *   Database column genre_id SqlType(int4)
   */
 
-case class APIMovie(movie: MovieDetailRow, genres: Seq[Genre])
+case class CompleteMovie(
+    var movie: MovieDetailRow,
+    var genres: Genres,
+    var crews: MovieCrews
+)
+
+case class MovieListItem(
+    id: Int,
+    title: String,
+    posterPath: Option[String],
+    voteAverage: Option[Double],
+    voteCount: Option[Int]
+)
+
+case class MovieCrews(crews: Seq[MovieCrew])
 
 case class MovieGenre(movieId: Int, genreId: Int)
 

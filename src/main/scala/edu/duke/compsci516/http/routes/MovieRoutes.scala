@@ -36,6 +36,9 @@ class MovieRoutes(movieRegistry: ActorRef[MovieRegistry.Command])(implicit
   def addMovie(movie: MovieDetailRow): Future[AddMovieResponse] =
     movieRegistry.ask(AddMovie(movie, _))
 
+  def getCompleteMovie(movieId: Int): Future[CompleteMovieResponse] =
+    movieRegistry.ask(GetCompleteMovie(movieId, _))
+
   val movieRoutes: Route =
     pathPrefix("movies") {
       concat(
@@ -49,6 +52,15 @@ class MovieRoutes(movieRegistry: ActorRef[MovieRegistry.Command])(implicit
               }
             }
           }
+        },
+        path(Segment) { movieId =>
+          concat(
+            get {
+              onSuccess(getCompleteMovie(movieId.toInt)) { response =>
+                complete(response.maybeMovie)
+              }
+            }
+          )
         }
       )
     }
