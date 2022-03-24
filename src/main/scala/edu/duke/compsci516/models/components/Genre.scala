@@ -5,8 +5,9 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
-import edu.duke.compsci516.models.database.{GenreTable}
-import edu.duke.compsci516.models.entity.Genre
+import _root_.edu.duke.compsci516.models.database.{GenreTable}
+import _root_.edu.duke.compsci516.models.entity.Genre
+import _root_.edu.duke.compsci516.models.entity.MovieListItem
 
 trait GenreRepositoryComponent {
   def add(genre: Genre): Future[Int]
@@ -45,4 +46,5 @@ class GenreRepository(db: Database) extends GenreRepositoryComponent {
   override def getGenres(): Future[Seq[Genre]] = db.run {
     GenreRows.result
   }
+
 }

@@ -43,36 +43,60 @@ class GenreRoutes(genreRegistry: ActorRef[GenreRegistry.Command])(implicit
     genreRegistry.ask(DeleteGenre(genreId, _))
   def updateGenre(genre: Genre): Future[ActionPerformed] =
     genreRegistry.ask(UpdateGenre(genre, _))
+  def getMoviesByGenre(
+      genreId: Int,
+      sortKey: String,
+      page: Int,
+      limit: Int
+  ): Future[GetMoviesByGenreResponse] =
+    genreRegistry.ask(GetMoviesByGenre(genreId, sortKey, page, limit, _))
 
   val genreRoutes: Route =
-      pathPrefix("genres") {
-        concat(
-          pathEnd {
-            concat(
-              get {
-                authenticateBasicAsync(
-                  realm = "secure",
-                  Authenticator.UserAuthenticatorAsync
-                ) { user =>
-                  complete(getGenres())
+    pathPrefix("genres") {
+      concat(
+        pathEnd {
+          concat(
+            get {
+              complete(getGenres())
+            },
+            post {
+              entity(as[Genre]) { genre =>
+                onSuccess(addGenre(genre)) { response =>
+                  complete((StatusCodes.Created, response.maybeGenre))
                 }
-              },
-              post {
-                entity(as[Genre]) { genre =>
-                  onSuccess(addGenre(genre)) { response =>
-                    complete((StatusCodes.Created, response.maybeGenre))
-                  }
+              }
+            },
+            put {
+              entity(as[Genre]) { genre =>
+                onSuccess(updateGenre(genre)) { performed =>
+                  complete((StatusCodes.OK, performed))
                 }
-              },
-              put {
-                entity(as[Genre]) { genre =>
-                  onSuccess(updateGenre(genre)) { performed =>
-                    complete((StatusCodes.OK, performed))
+              }
+            }
+          )
+        },
+        path("movies") {
+          concat(
+            pathEnd {
+              concat {
+                get {
+                  parameters(
+                    "genre".as[Int],
+                    "sortKey",
+                    "page".as[Int],
+                    "limit".as[Int]
+                  ) { (genre, sortKey, page, limit) =>
+                    onSuccess(getMoviesByGenre(genre, sortKey, page, limit)) {
+                      response =>
+                        complete((StatusCodes.OK, response.movies))
+                    }
                   }
                 }
               }
-            )
-          },
+            }
+          )
+        },
+        path("detail") {
           path(Segment) { genreId =>
             concat(
               get {
@@ -92,6 +116,7 @@ class GenreRoutes(genreRegistry: ActorRef[GenreRegistry.Command])(implicit
               }
             )
           }
-        )
-      }
+        }
+      )
+    }
 }

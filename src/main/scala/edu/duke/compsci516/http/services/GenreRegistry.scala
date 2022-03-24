@@ -10,12 +10,13 @@ import scala.util.{Failure, Success}
 import java.sql.Timestamp
 import java.time.Instant
 
-import edu.duke.compsci516.models.entity.{Genre, Genres}
-import edu.duke.compsci516.components.DatabaseComponent
-import edu.duke.compsci516.models.components.GenreRepository
+import edu.duke.compsci516.models.entity._
+import edu.duke.compsci516.components._
+import edu.duke.compsci516.models.components._
 
 object GenreRegistry extends DatabaseComponent {
   private val genreRepo = new GenreRepository(this.db)
+  private val movieRepo = new MovieRepository(this.db)
 
   sealed trait Command
   final case class GetGenres(replyTo: ActorRef[Genres]) extends Command
@@ -30,9 +31,20 @@ object GenreRegistry extends DatabaseComponent {
       replyTo: ActorRef[ActionPerformed]
   ) extends Command
 
+  final case class GetMoviesByGenre(
+      genreId: Int,
+      sortKey: String,
+      page: Int,
+      limit: Int,
+      replyTo: ActorRef[GetMoviesByGenreResponse]
+  ) extends Command
+
   final case class GetGenreResopnse(maybeGenre: Option[Genre])
   final case class AddGenreResponse(maybeGenre: Option[Genre])
   final case class ActionPerformed(description: String)
+  final case class GetMoviesByGenreResponse(
+      movies: PaginatedResult[MovieDetailRow]
+  )
 
   def apply(): Behavior[Command] =
     Behaviors.receiveMessage {
@@ -78,6 +90,25 @@ object GenreRegistry extends DatabaseComponent {
           case Failure(f) =>
             replyTo ! AddGenreResponse(None)
         }
+        Behaviors.same
+
+      case GetMoviesByGenre(
+            genreId: Int,
+            sortKey: String,
+            page: Int,
+            limit: Int,
+            replyTo: ActorRef[GetMoviesByGenreResponse]
+          ) =>
+        movieRepo
+          .getMoviesByGenre(genreId, sortKey, limit, page * limit)
+          .onComplete {
+            case Success(movies) =>
+              replyTo ! GetMoviesByGenreResponse(movies)
+            case Failure(f) =>
+              replyTo ! GetMoviesByGenreResponse(
+                new PaginatedResult(0, List.empty[MovieDetailRow], false)
+              )
+          }
         Behaviors.same
     }
 }
