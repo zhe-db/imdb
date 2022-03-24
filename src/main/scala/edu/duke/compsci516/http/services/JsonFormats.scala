@@ -56,4 +56,9 @@ object JsonFormats {
   implicit val apiUserRatingJsonFormat = jsonFormat3(APIUserRating)
   implicit val userRatingJsonFormat = jsonFormat4(UserRating)
   implicit val movieDetailRowJsonFormat = jsonFormat16(MovieDetailRow)
+  implicit val movieDetailRowsJsonFormat = jsonFormat1(MovieDetailRows)
+  implicit val paginatedMovieDetailRowsJsonFormat = jsonFormat3(PaginatedResult[MovieDetailRow])
+  implicit val movieCrewJsonFormat = jsonFormat9(MovieCrew)
+  implicit val movieCrewsJsonFormat = jsonFormat1(MovieCrews)
+  implicit val completeMovieJsonFormat = jsonFormat3(CompleteMovie)
 }
