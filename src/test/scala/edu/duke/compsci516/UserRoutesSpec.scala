@@ -1,4 +1,4 @@
-package edu.duke.compsci516
+package edu.duke.imdb
 
 //#user-routes-spec
 //#test-top

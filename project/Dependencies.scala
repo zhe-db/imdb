@@ -9,6 +9,7 @@ object Version {
   val akkaHttpJson4s = "1.38.2"
   val logbackClassic = "1.2.7"
   val scalaTest = "3.2.10"
+  val delta = "1.1.0"
 }
 
 object Library {
@@ -31,6 +32,7 @@ object Library {
   val codec = "commons-codec" % "commons-codec" % "1.15"
   val cors = "ch.megard" %% "akka-http-cors" % "1.1.3"
   val akkaStreamContrib = "com.typesafe.akka" %% "akka-stream-contrib" % "0.10"
+  val delta = "io.delta" %% "delta-core" % Version.delta
 }
 
 object Dependencies {
@@ -53,6 +55,7 @@ object Dependencies {
     scalaTest,
     codec,
     cors,
+    delta,
     akkaStreamContrib
   )
 
