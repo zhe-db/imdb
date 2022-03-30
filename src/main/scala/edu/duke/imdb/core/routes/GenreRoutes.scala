@@ -1,4 +1,4 @@
-package edu.duke.imdb.http.routes
+package edu.duke.imdb.core.routes
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model.StatusCodes
@@ -17,9 +17,9 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
 import edu.duke.imdb.models.entity.{Genre, Genres}
-import edu.duke.imdb.http.services._
-import edu.duke.imdb.http.services.GenreRegistry._
-import edu.duke.imdb.http.services.Authenticator
+import edu.duke.imdb.core.services._
+import edu.duke.imdb.core.services.GenreRegistry._
+import edu.duke.imdb.core.services.Authenticator
 
 class GenreRoutes(genreRegistry: ActorRef[GenreRegistry.Command])(implicit
     val system: ActorSystem[_]

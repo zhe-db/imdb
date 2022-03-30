@@ -1,4 +1,4 @@
-package edu.duke.imdb.http.services
+package edu.duke.imdb.core.services
 //#user-registry-actor
 import akka.actor.typed.ActorRef
 import akka.actor.typed.Behavior

@@ -1,4 +1,4 @@
-package edu.duke.imdb.http.routes
+package edu.duke.imdb.core.routes
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.model.StatusCodes
@@ -16,9 +16,9 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import edu.duke.imdb.models.entity._
-import edu.duke.imdb.http.services._
-import edu.duke.imdb.http.services.UserRegistry._
-import edu.duke.imdb.http.services.Authenticator
+import edu.duke.imdb.core.services._
+import edu.duke.imdb.core.services.UserRegistry._
+import edu.duke.imdb.core.services.Authenticator
 import edu.duke.imdb.models.entity.UserRating
 import akka.actor.Status
 

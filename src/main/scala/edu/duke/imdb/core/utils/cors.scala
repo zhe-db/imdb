@@ -1,4 +1,4 @@
-package edu.duke.imdb.http.utils
+package edu.duke.imdb.core.utils
 
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.Route

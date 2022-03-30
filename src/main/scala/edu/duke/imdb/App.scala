@@ -14,9 +14,9 @@ import scala.util.Failure
 import scala.util.Success
 
 import edu.duke.imdb.components._
-import edu.duke.imdb.http.services._
-import edu.duke.imdb.http.routes._
-import edu.duke.imdb.http.utils.CORSHandler
+import edu.duke.imdb.core.services._
+import edu.duke.imdb.core.routes._
+import edu.duke.imdb.core.utils.CORSHandler
 import akka.http.javadsl.model.headers
 
 //#main-class

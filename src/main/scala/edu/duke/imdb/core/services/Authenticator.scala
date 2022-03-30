@@ -1,4 +1,4 @@
-package edu.duke.imdb.http.services
+package edu.duke.imdb.core.services
 
 import akka.http.scaladsl.model._
 import akka.http.scaladsl.model.headers._

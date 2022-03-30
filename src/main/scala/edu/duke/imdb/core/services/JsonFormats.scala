@@ -1,4 +1,4 @@
-package edu.duke.imdb.http.services
+package edu.duke.imdb.core.services
 
 import edu.duke.imdb.models.entity._
 
