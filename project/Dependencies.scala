@@ -32,6 +32,7 @@ object Library {
   val codec = "commons-codec" % "commons-codec" % "1.15"
   val cors = "ch.megard" %% "akka-http-cors" % "1.1.3"
   val akkaStreamContrib = "com.typesafe.akka" %% "akka-stream-contrib" % "0.10"
+  val akkaStreamHDFS = "com.lightbend.akka" %% "akka-stream-alpakka-hdfs" % "3.0.4"
   val delta = "io.delta" %% "delta-core" % Version.delta
 }
 
@@ -56,7 +57,8 @@ object Dependencies {
     codec,
     cors,
     delta,
-    akkaStreamContrib
+    akkaStreamContrib,
+    akkaStreamHDFS,
   )
 
 }
