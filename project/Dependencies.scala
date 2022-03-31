@@ -5,11 +5,12 @@ object Version {
   val slick = "3.3.3"
   val postgres = "42.3.1"
   val akkaHttp = "10.2.7"
-  val json4s = "4.0.3"
+  val json4s = "3.5.5"
   val akkaHttpJson4s = "1.38.2"
   val logbackClassic = "1.2.7"
   val scalaTest = "3.2.10"
   val delta = "1.1.0"
+  val spark = "3.2.1"
 }
 
 object Library {
@@ -34,6 +35,7 @@ object Library {
   val akkaStreamContrib = "com.typesafe.akka" %% "akka-stream-contrib" % "0.10"
   val akkaStreamHDFS = "com.lightbend.akka" %% "akka-stream-alpakka-hdfs" % "3.0.4"
   val delta = "io.delta" %% "delta-core" % Version.delta
+  val spark = "org.apache.spark" %% "spark-sql" % Version.spark
 }
 
 object Dependencies {
@@ -49,9 +51,9 @@ object Dependencies {
     slickCodegen,
     postgresql,
     akkaHttp,
-    json4sNative,
-    json4sJackson,
-    akkaHttpJson4s,
+    // json4sNative,
+    // json4sJackson,
+    // akkaHttpJson4s,
     logbackClassic,
     scalaTest,
     codec,
@@ -59,6 +61,7 @@ object Dependencies {
     delta,
     akkaStreamContrib,
     akkaStreamHDFS,
+    spark
   )
 
 }
