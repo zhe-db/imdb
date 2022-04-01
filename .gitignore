@@ -8,3 +8,4 @@ project/metals.sbt
 .bloop/
 .metals/
 .scalafmt.conf
+.DS_Store
