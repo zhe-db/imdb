@@ -5,8 +5,8 @@ import slick.jdbc.JdbcProfile
 
 import scala.concurrent.Future
 
-import edu.duke.imdb.models.entity.MovieGenre
-import edu.duke.imdb.models.database.MovieGenreTable
+import _root_.edu.duke.imdb.models.entity.MovieGenre
+import _root_.edu.duke.imdb.models.database.MovieGenreTable
 
 trait MovieGenreRepositoryComponent {
   def add(movieGenre: MovieGenre): Future[Int]

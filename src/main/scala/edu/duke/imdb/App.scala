@@ -13,10 +13,10 @@ import ch.megard.akka.http.cors.scaladsl.settings.CorsSettings
 import scala.util.Failure
 import scala.util.Success
 
-import edu.duke.imdb.components._
-import edu.duke.imdb.core.services._
-import edu.duke.imdb.core.routes._
-import edu.duke.imdb.core.utils.CORSHandler
+import _root_.edu.duke.imdb.components._
+import _root_.edu.duke.imdb.core.services._
+import _root_.edu.duke.imdb.core.routes._
+import _root_.edu.duke.imdb.core.utils.CORSHandler
 import akka.http.javadsl.model.headers
 
 //#main-class
@@ -25,7 +25,7 @@ object App extends ConfigComponent with DatabaseComponent with CORSHandler {
   val port = config.getInt("application.port")
 
   println(host + ":" + port)
-  //#start-http-server
+  // #start-http-server
   private def startHttpServer(
       routes: Route
   )(implicit system: ActorSystem[_]): Unit = {
@@ -47,9 +47,9 @@ object App extends ConfigComponent with DatabaseComponent with CORSHandler {
     }
   }
 
-  //#start-http-server
+  // #start-http-server
   def main(args: Array[String]): Unit = {
-    //#server-bootstrapping
+    // #server-bootstrapping
     val rootBehavior = Behaviors.setup[Nothing] { context =>
       val userRegistryActor =
         context.spawn(UserRegistry(), "UserRegistryActor")
@@ -82,7 +82,7 @@ object App extends ConfigComponent with DatabaseComponent with CORSHandler {
       Behaviors.empty
     }
     val system = ActorSystem[Nothing](rootBehavior, "HelloAkkaHttpServer")
-    //#server-bootstrapping
+    // #server-bootstrapping
   }
 }
 //#main-class

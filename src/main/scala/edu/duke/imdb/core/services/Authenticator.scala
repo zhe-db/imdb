@@ -9,10 +9,10 @@ import scala.util.{Failure, Success}
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import edu.duke.imdb.models.components.UserRepository
-import edu.duke.imdb.components.DatabaseComponent
-import edu.duke.imdb.utils.Encryption
-import edu.duke.imdb.models.entity.User
+import _root_.edu.duke.imdb.models.components.UserRepository
+import _root_.edu.duke.imdb.components.DatabaseComponent
+import _root_.edu.duke.imdb.utils.Encryption
+import _root_.edu.duke.imdb.models.entity.User
 
 object Authenticator extends DatabaseComponent {
   private val userRepo = new UserRepository(this.db)

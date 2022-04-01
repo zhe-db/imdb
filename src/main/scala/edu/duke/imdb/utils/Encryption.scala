@@ -6,7 +6,7 @@ import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 import org.apache.commons.codec.binary.Base64
 
-import edu.duke.imdb.components.ConfigComponent
+import _root_.edu.duke.imdb.components.ConfigComponent
 
 object Encryption extends ConfigComponent {
   private val key = config.getString("crypto.key")

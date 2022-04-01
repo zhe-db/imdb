@@ -16,17 +16,17 @@ import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 import ch.megard.akka.http.cors.scaladsl.CorsDirectives._
 
-import edu.duke.imdb.models.entity.{Genre, Genres}
-import edu.duke.imdb.core.services._
-import edu.duke.imdb.core.services.GenreRegistry._
-import edu.duke.imdb.core.services.Authenticator
+import _root_.edu.duke.imdb.models.entity._
+import _root_.edu.duke.imdb.core.services._
+import _root_.edu.duke.imdb.core.services.GenreRegistry._
+import _root_.edu.duke.imdb.core.services.Authenticator
 
 class GenreRoutes(genreRegistry: ActorRef[GenreRegistry.Command])(implicit
     val system: ActorSystem[_]
 ) {
   import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
   import JsonFormats._
-  //#import-json-formats
+  // #import-json-formats
 
   // If ask takes more time than this to complete the request is failed
   private implicit val timeout = Timeout.create(

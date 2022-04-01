@@ -15,21 +15,21 @@ import akka.util.Timeout
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import edu.duke.imdb.models.entity._
-import edu.duke.imdb.core.services._
-import edu.duke.imdb.core.services.UserRegistry._
-import edu.duke.imdb.core.services.Authenticator
-import edu.duke.imdb.models.entity.UserRating
+import _root_.edu.duke.imdb.models.entity._
+import _root_.edu.duke.imdb.core.services._
+import _root_.edu.duke.imdb.core.services.UserRegistry._
+import _root_.edu.duke.imdb.core.services.Authenticator
+import _root_.edu.duke.imdb.models.entity.UserRating
 import akka.actor.Status
 
 class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
     val system: ActorSystem[_]
 ) {
 
-  //#user-routes-class
+  // #user-routes-class
   import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
   import JsonFormats._
-  //#import-json-formats
+  // #import-json-formats
 
   // If ask takes more time than this to complete the request is failed
   private implicit val timeout = Timeout.create(
@@ -72,13 +72,13 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
   def getUserInfo(userId: java.util.UUID): Future[GetUserInfoResponse] =
     userRegistry.ask(GetUserInfo(userId, _))
 
-  //#all-routes
-  //#users-get-post
-  //#users-get-delete
+  // #all-routes
+  // #users-get-post
+  // #users-get-delete
   val userRoutes: Route =
     pathPrefix("users") {
       concat(
-        //#users-get-delete
+        // #users-get-delete
         pathEnd {
           concat(
             get {
@@ -99,8 +99,8 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
             }
           )
         },
-        //#users-get-delete
-        //#users-get-post
+        // #users-get-delete
+        // #users-get-post
         path("login") {
           get {
             authenticateBasicAsync(
@@ -163,10 +163,9 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
           pathEnd {
             get {
               parameters("userId".as[java.util.UUID]) { (userId) =>
-                onSuccess(
-                  getUserInfo(userId)) { response =>
-                    complete((StatusCodes.OK, response.maybeUser))
-                  }
+                onSuccess(getUserInfo(userId)) { response =>
+                  complete((StatusCodes.OK, response.maybeUser))
+                }
               }
             }
           }
@@ -174,7 +173,7 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
         path(Segment) { email =>
           concat(
             get {
-              //#retrieve-user-info
+              // #retrieve-user-info
               rejectEmptyResponse {
                 authenticateBasicAsync(
                   realm = "secure",
@@ -195,10 +194,10 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
 
                 }
               }
-              //#retrieve-user-info
+              // #retrieve-user-info
             },
             delete {
-              //#users-delete-logic
+              // #users-delete-logic
               authenticateBasicAsync(
                 realm = "secure",
                 Authenticator.UserAuthenticatorAsync
@@ -215,7 +214,7 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
                     )
                   )
               }
-              //#users-delete-logic
+              // #users-delete-logic
             }
           )
         },
@@ -241,8 +240,8 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
           }
         }
       )
-      //#users-get-delete
+      // #users-get-delete
 
     }
-  //#all-routes
+  // #all-routes
 }

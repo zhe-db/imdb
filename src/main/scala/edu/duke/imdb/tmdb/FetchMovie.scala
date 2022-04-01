@@ -12,7 +12,7 @@ import scala.concurrent._
 import ExecutionContext.Implicits.global
 import java.text.SimpleDateFormat;
 
-import edu.duke.imdb.tmdb.client.TmdbClient
+import _root_.edu.duke.imdb.tmdb.client.TmdbClient
 
 import edu.duke.imdb.models.entity
 import _root_.edu.duke.imdb.models.components._
@@ -70,10 +70,16 @@ object FetchMovie extends ConfigComponent with DatabaseComponent {
   def fetchMovieByYearAndGenre(year: Int, genreId: Int) = {
     var results =
       try {
-        Await.result(tmdbClient.getMoviesByYearAndGenre(1, year, genreId), timeout * 10)
+        Await.result(
+          tmdbClient.getMoviesByYearAndGenre(1, year, genreId),
+          timeout * 10
+        )
       } catch {
         case _ =>
-          Await.result(tmdbClient.getMoviesByYearAndGenre(1, year, genreId), timeout * 10)
+          Await.result(
+            tmdbClient.getMoviesByYearAndGenre(1, year, genreId),
+            timeout * 10
+          )
       }
 
     results match {
@@ -90,10 +96,16 @@ object FetchMovie extends ConfigComponent with DatabaseComponent {
     println(s"Year: ${year}, Genre: ${genreId}, Page: ${page}")
     var results =
       try {
-        Await.result(tmdbClient.getMoviesByYearAndGenre(page, year, genreId), timeout * 10)
+        Await.result(
+          tmdbClient.getMoviesByYearAndGenre(page, year, genreId),
+          timeout * 10
+        )
       } catch {
         case _ =>
-          Await.result(tmdbClient.getMoviesByYearAndGenre(page, year, genreId), timeout * 10)
+          Await.result(
+            tmdbClient.getMoviesByYearAndGenre(page, year, genreId),
+            timeout * 10
+          )
       }
     results match {
       case r: Results => {
@@ -123,7 +135,7 @@ object FetchMovie extends ConfigComponent with DatabaseComponent {
     val genres = fetchGenres()
     for (year <- startYear to endYear) {
       for (genreId <- genres) {
-        fetchMovieByYearAndGenre(year, genreId) 
+        fetchMovieByYearAndGenre(year, genreId)
       }
     }
   }

@@ -1,4 +1,4 @@
-package edu.duke.imdb.hdfs
+package edu.duke.imdb.data.hdfs
 
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.fs.FileSystem
@@ -7,8 +7,9 @@ import akka.stream.alpakka.hdfs.scaladsl.HdfsFlow
 import org.apache.hadoop.io.compress._
 
 import _root_.edu.duke.imdb.components.ConfigComponent
+import edu.duke.imdb.data.DataSource
 
-object HDFSComponent extends ConfigComponent {
+trait HDFSComponent extends DataSource {
   val conf = new Configuration()
   val hdfsDomain = this.config.getString("hdfs.domain")
   val hdfsPort = this.config.getString("hdfs.port")

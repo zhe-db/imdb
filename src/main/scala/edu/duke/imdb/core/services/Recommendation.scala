@@ -1,5 +1,7 @@
 package edu.duke.imdb.core.services
 
+package edu.duke.imdb.core.services
+
 import akka.actor.typed.ActorRef
 import akka.actor.typed.Behavior
 import akka.actor.typed.scaladsl.Behaviors
@@ -11,10 +13,14 @@ import java.sql.Timestamp
 import java.time.Instant
 
 import _root_.edu.duke.imdb.models.entity._
-import _root_.edu.duke.imdb.components._
-import _root_.edu.duke.imdb.models.components._
+import _root_.edu.duke.imdb.components.DatabaseComponent
+import _root_.edu.duke.imdb.models.entity.MovieDetailRow
+import _root_.edu.duke.imdb.models.components.MovieRepository
+import _root_.edu.duke.imdb.models.components.UserFavouriteMovieRepository
+import _root_.edu.duke.imdb.models.components.UserRateMovieRepository
+import _root_.edu.duke.imdb.models.components.UserReviewMovieRepository
 
-object MovieRegistry extends DatabaseComponent {
+object Recommendation extends DatabaseComponent {
   private val movieRepo = new MovieRepository(this.db)
   private val userFavMovieRepo = new UserFavouriteMovieRepository(this.db)
   private val userRatingRepo = new UserRateMovieRepository(this.db)

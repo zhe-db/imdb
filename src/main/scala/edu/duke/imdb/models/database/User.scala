@@ -4,7 +4,7 @@ import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 import slick.jdbc.PostgresProfile.api._
 
-import edu.duke.imdb.models.entity.User
+import _root_.edu.duke.imdb.models.entity._
 
 object UserTable
     extends {

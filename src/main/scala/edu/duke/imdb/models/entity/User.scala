@@ -4,7 +4,7 @@ import java.util.UUID.randomUUID
 import java.time.Instant
 import java.sql.Timestamp
 
-import edu.duke.imdb.utils.Encryption
+import _root_.edu.duke.imdb.utils.Encryption
 
 /** Entity class storing rows of table Users
   * @param userId

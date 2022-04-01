@@ -1,6 +1,6 @@
 package edu.duke.imdb.core.services
 
-import edu.duke.imdb.models.entity._
+import _root_.edu.duke.imdb.models.entity._
 
 import spray.json.DefaultJsonProtocol
 import spray.json.JsonFormat

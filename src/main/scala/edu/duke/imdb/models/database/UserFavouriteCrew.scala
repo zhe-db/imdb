@@ -4,8 +4,8 @@ import slick.jdbc.JdbcProfile
 import slick.lifted.ProvenShape
 import slick.jdbc.PostgresProfile.api._
 
-import edu.duke.imdb.models.entity.{UserFavouriteCrew}
-import edu.duke.imdb.models.database.{UserTable, CrewTable}
+import _root_.edu.duke.imdb.models.entity._
+import _root_.edu.duke.imdb.models.database._
 
 object UserFavouriteCrewTable
     extends {

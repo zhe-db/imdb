@@ -9,6 +9,9 @@ import _root_.edu.duke.imdb.models.entity._
 import _root_.edu.duke.imdb.models.database._
 import scala.util.Success
 import scala.concurrent.ExecutionContext
+import slick.basic.DatabasePublisher
+import slick.jdbc.ResultSetType
+import slick.jdbc.ResultSetConcurrency
 
 trait MovieRepositoryComponent {
   def add(movie: MovieDetailRow): Future[MovieDetailRow]
@@ -27,6 +30,9 @@ trait MovieRepositoryComponent {
       limit: Int,
       offset: Int
   ): Future[PaginatedResult[MovieDetailRow]]
+
+  def getAllMoviesForRecommendation()
+      : DatabasePublisher[(MovieDetailRow, Int, Int)]
 }
 
 class MovieRepository(db: Database) extends MovieRepositoryComponent {
@@ -99,5 +105,14 @@ class MovieRepository(db: Database) extends MovieRepositoryComponent {
       entities = res.toList,
       hasNextPage = numberOfRows - (offset + limit) > 0
     )
+  }
+
+  override def getAllMoviesForRecommendation()
+      : DatabasePublisher[(MovieDetailRow, Int, Int)] = {
+    val query = (for {
+      ((movie, genre), crew) <-
+        MovieDetailRows join MovieGenreRows on (_.id === _.movieId) join MovieCrewRows on (_._1.id === _.movieId)
+    } yield (movie, genre.genreId, crew.crewId))
+    db.stream(query.result)
   }
 }

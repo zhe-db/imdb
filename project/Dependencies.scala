@@ -33,8 +33,14 @@ object Library {
   val codec = "commons-codec" % "commons-codec" % "1.15"
   val cors = "ch.megard" %% "akka-http-cors" % "1.1.3"
   val akkaStreamContrib = "com.typesafe.akka" %% "akka-stream-contrib" % "0.10"
-  val akkaStreamHDFS = "com.lightbend.akka" %% "akka-stream-alpakka-hdfs" % "3.0.4"
+  val akkaStreamHDFS =
+    "com.lightbend.akka" %% "akka-stream-alpakka-hdfs" % "3.0.4"
+  val hive = "io.delta" %% "delta-hive" % "0.3.0"
   val delta = "io.delta" %% "delta-core" % Version.delta
+  val deltaStandAlone = "io.delta" %% "delta-standalone" % "0.3.0"
+  val scallop = "org.rogach" %% "scallop" % "3.5.1"
+  val hadoopClient = "org.apache.hadoop" % "hadoop-client" % "3.1.0"
+  val parquet = "org.apache.parquet" % "parquet-hadoop" % "1.10.1"
   val spark = "org.apache.spark" %% "spark-sql" % Version.spark
 }
 
@@ -59,6 +65,10 @@ object Dependencies {
     codec,
     cors,
     delta,
+    hive,
+    scallop,
+    hadoopClient,
+    parquet,
     akkaStreamContrib,
     akkaStreamHDFS,
     spark

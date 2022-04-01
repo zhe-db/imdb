@@ -9,12 +9,12 @@ import scala.util.{Failure, Success, Try}
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
-import edu.duke.imdb.components.ConfigComponent
-import edu.duke.imdb.tmdb.client.TmdbClient
+import _root_.edu.duke.imdb.components.ConfigComponent
+import _root_.edu.duke.imdb.tmdb.client.TmdbClient
 
-import edu.duke.imdb.models.entity
-import edu.duke.imdb.models.components.GenreRepository
-import edu.duke.imdb.components.DatabaseComponent
+import _root_.edu.duke.imdb.models.entity
+import _root_.edu.duke.imdb.models.components.GenreRepository
+import _root_.edu.duke.imdb.components.DatabaseComponent
 
 object FetchGenre extends ConfigComponent with DatabaseComponent {
   val apiKey = config.getString("tmdb.apiKey")

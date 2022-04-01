@@ -6,7 +6,7 @@ import org.apache.spark.sql.types._
 
 import java.nio.file.{Path, Paths}
 
-import edu.duke.imdb.components._
+import _root_.edu.duke.imdb.components._
 
 object CollabFilter extends ConfigComponent {
   this: ConfigComponent =>

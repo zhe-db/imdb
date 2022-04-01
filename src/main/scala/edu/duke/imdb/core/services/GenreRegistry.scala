@@ -10,9 +10,9 @@ import scala.util.{Failure, Success}
 import java.sql.Timestamp
 import java.time.Instant
 
-import edu.duke.imdb.models.entity._
-import edu.duke.imdb.components._
-import edu.duke.imdb.models.components._
+import _root_.edu.duke.imdb.models.entity._
+import _root_.edu.duke.imdb.components._
+import _root_.edu.duke.imdb.models.components._
 
 object GenreRegistry extends DatabaseComponent {
   private val genreRepo = new GenreRepository(this.db)
