@@ -6,18 +6,9 @@ import org.apache.spark.sql.types._
 
 import _root_.edu.duke.imdb.components._
 import _root_.edu.duke.imdb.data.delta._
+import edu.duke.imdb.utils.SparkComponent
 
-object DeltaConnector extends ConfigComponent {
-  implicit val spark: SparkSession = SparkSession
-    .builder()
-    .appName("Quickstart")
-    .master("local[*]")
-    .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
-    .config(
-      "spark.sql.catalog.spark_catalog",
-      "org.apache.spark.sql.delta.catalog.DeltaCatalog"
-    )
-    .getOrCreate()
+trait DeltaConnector extends ConfigComponent with SparkComponent {
 
   // All additional possible jdbc connector properties described here -
   // https://dev.mysql.com/doc/connector-j/8.0/en/connector-j-reference-configuration-properties.html
@@ -27,13 +18,6 @@ object DeltaConnector extends ConfigComponent {
       "database.postgre.properties.serverName"
     )}:${this.config.getString("database.postgre.properties.portNumber")}/${this.config
       .getString("database.postgre.properties.databaseName")}"
-
-  val conf = ImportConfig(
-    source = "moviedetail",
-    destination = "moviedetail",
-    splitBy = "id",
-    chunks = 20
-  )
 
   val jdbcConfg = Map(
     "user" -> this.config.getString("database.postgre.properties.user"),
@@ -65,7 +49,20 @@ object DeltaConnector extends ConfigComponent {
     )
   )
 
-  def main(args: Array[String]) {
+}
+
+object DeltaConnector extends DeltaConnector {
+  def importTable(
+      sourceTableName: String,
+      destTableName: String,
+      primaryColumnName: String
+  ): Unit = {
+    val conf = ImportConfig(
+      source = sourceTableName,
+      destination = destTableName,
+      splitBy = primaryColumnName,
+      chunks = 20
+    )
     new JDBCImport(
       jdbcUrl = jdbcUrl,
       importConfig = conf,

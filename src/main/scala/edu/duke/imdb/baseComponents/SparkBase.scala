@@ -8,7 +8,7 @@ trait SparkComponent extends ConfigComponent {
   val appName = this.config.getString("spark.appName")
   val masterURL = this.config.getString("spark.masterURL")
 
-  val spark = SparkSession
+  implicit val spark = SparkSession
     .builder()
     .appName(appName)
     .master(masterURL)
