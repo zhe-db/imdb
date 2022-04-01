@@ -7,16 +7,11 @@ import org.apache.spark.sql.types._
 import java.nio.file.{Path, Paths}
 
 import _root_.edu.duke.imdb.components._
+import edu.duke.imdb.utils.SparkComponent
 
-object CollabFilter extends ConfigComponent {
+object CollabFilter extends ConfigComponent with SparkComponent {
   this: ConfigComponent =>
   def main(args: Array[String]): Unit = {
-    val spark = SparkSession
-      .builder()
-      .appName("Collab Filter")
-      .config("spark.master", "local")
-      .getOrCreate()
-
     lazy val input_dir: String = config.getString("data.input_dir")
     lazy val ratings_file: Path =
       Paths.get(input_dir, config.getString("data.ratings"))

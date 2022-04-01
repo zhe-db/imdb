@@ -33,11 +33,11 @@ object DeltaTables extends ConfigComponent {
      imdb_id STRING,
      title STRING,
      overview STRING,
-     popularity FLOAT,
+     popularity DOUBLE,
      poster_path STRING,
      runtime INT,
      revenue INT,
-     vote_average FLOAT,
+     vote_average DOUBLE,
      homepage STRING,
      vote_count INT,
      tagline STRING
@@ -49,7 +49,7 @@ object DeltaTables extends ConfigComponent {
      id STRING,
      user_id STRING,
      movie_id INT,
-     rating FLOAT
+     rating DOUBLE
      ) USING DELTA LOCATION '${save_path}/userratings' 
      """)
 
@@ -73,5 +73,7 @@ object DeltaTables extends ConfigComponent {
      ordering INTEGER
      ) USING DELTA LOCATION '${save_path}/moviecrew' 
      """)
+    val connector = DeltaConnector
+    connector.main(Array.empty[String])
   }
 }
