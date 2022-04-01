@@ -6,7 +6,7 @@ import org.apache.spark.sql.types._
 
 import _root_.edu.duke.imdb.components._
 import _root_.edu.duke.imdb.data.delta._
-import edu.duke.imdb.utils.SparkComponent
+import edu.duke.imdb.components.SparkComponent
 
 trait DeltaConnector extends ConfigComponent with SparkComponent {
 

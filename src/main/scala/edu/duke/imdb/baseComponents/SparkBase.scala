@@ -1,4 +1,4 @@
-package edu.duke.imdb.utils
+package edu.duke.imdb.components
 
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.{SparkSession, SQLContext}

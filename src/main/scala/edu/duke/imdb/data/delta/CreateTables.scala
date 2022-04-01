@@ -74,6 +74,5 @@ object DeltaTables extends ConfigComponent {
      ) USING DELTA LOCATION '${save_path}/moviecrew' 
      """)
     val connector = DeltaConnector
-    connector.main(Array.empty[String])
   }
 }
