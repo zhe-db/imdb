@@ -1,7 +1,7 @@
 package edu.duke.imdb.data.delta.tables
 
-import edu.duke.imdb.components._
-import edu.duke.imdb.data.delta.DeltaConnector
+import _root_.edu.duke.imdb.components._
+import _root_.edu.duke.imdb.data.delta.DeltaConnector
 
 class DeltaTableBase(
     var tableName: String,

@@ -8,32 +8,27 @@ import java.nio.file.{Path, Paths}
 
 import _root_.edu.duke.imdb.components._
 import edu.duke.imdb.components.SparkComponent
+import edu.duke.imdb.data.delta.tables.ml.MovieLensSpark
+import edu.duke.imdb.data.StorageType
 
 object CollabFilter extends ConfigComponent with SparkComponent {
   this: ConfigComponent =>
   def main(args: Array[String]): Unit = {
-    lazy val input_dir: String = config.getString("data.input_dir")
-    lazy val ratings_file: Path =
-      Paths.get(input_dir, config.getString("data.ratings"))
-    lazy val movies_file: Path =
-      Paths.get(input_dir, config.getString("data.movies"))
 
-    import spark.implicits._
+    val movieLensLoader =
+      new MovieLensSpark(
+        databaseName = "ml-25m",
+        storageType = StorageType.fs_csv
+      )
 
-    val ratings_df =
-      spark.read.option("header", "true").csv(ratings_file.toString)
-    ratings_df.show(5)
+    val ratings_df = movieLensLoader.ratings_df.get
 
-    val movies_df =
-      spark.read
-        .option("header", "true")
-        .csv(movies_file.toString)
-        .select(
-          col("movieId"),
-          col("title"),
-          split(col("genres"), "\\|").as("genres")
-        )
-    movies_df.show(5)
+    val movies_df = movieLensLoader.movies_df.get
+      .select(
+        col("movieId"),
+        col("title"),
+        split(col("genres"), "\\|").as("genres")
+      )
 
     val set = ratings_df.randomSplit(Array(0.9, 0.1), seed = 12345)
     val training = set(0).cache()

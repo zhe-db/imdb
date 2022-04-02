@@ -14,6 +14,10 @@ trait SparkComponent extends ConfigComponent {
     .master(masterURL)
     .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
     .config(
+      "spark.delta.logStore.class",
+      "org.apache.spark.sql.delta.storage.HDFSLogStore"
+    )
+    .config(
       "spark.sql.catalog.spark_catalog",
       "org.apache.spark.sql.delta.catalog.DeltaCatalog"
     )
