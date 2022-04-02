@@ -8,18 +8,27 @@ import org.apache.spark.sql.DataFrame
 
 trait MovieLens extends ConfigComponent {}
 
-class MovieLensComponent(datasetName: String) extends MovieLens {
-  val datasetPath = this.config.getString(s"movielens.${datasetName}.input_dir")
-  val ratingsFile: Path = Paths.get(
-    datasetPath,
-    this.config.getString(s"movielens.${datasetName}.ratings")
-  )
-  val moviesFile: Path =
-    Paths.get(datasetPath, config.getString(s"movielens.${datasetName}.movies"))
-  val linksFile: Path =
-    Paths.get(datasetPath, config.getString(s"movielens.${datasetName}.links"))
-  val tagsFile: Path =
-    Paths.get(datasetPath, config.getString(s"movielens.${datasetName}.tags"))
+class MovieLensComponent(datasetName: String, storageType: StorageType.Storage)
+    extends MovieLens {
+  var datasetPath = ""
+  storageType match {
+    case StorageType.fs_csv | StorageType.fs_delta =>
+      datasetPath = this.config.getString(s"movielens.${datasetName}.input_dir")
+    case StorageType.hdfs_csv | StorageType.hdfs_delta =>
+      datasetPath =
+        s"hdfs://${this.config.getString("hdfs.domain")}:${this.config
+          .getString("hdfs.port")}/${this.config
+          .getString(s"movielens.${datasetName}.hdfs.input_dir")}"
+  }
+
+  val ratingsFile =
+    s"${datasetPath}/${this.config.getString(s"movielens.${datasetName}.ratings")}"
+  val moviesFile =
+    s"${datasetPath}/${this.config.getString(s"movielens.${datasetName}.movies")}"
+  val linksFile =
+    s"${datasetPath}/${this.config.getString(s"movielens.${datasetName}.links")}"
+  val tagsFile =
+    s"${datasetPath}/${this.config.getString(s"movielens.${datasetName}.tags")}"
 }
 
 class MovieLensSpark(databaseName: String, storageType: StorageType.Storage)
@@ -31,8 +40,8 @@ class MovieLensSpark(databaseName: String, storageType: StorageType.Storage)
   var tags_df: Option[DataFrame] = None
 
   storageType match {
-    case StorageType.fs_csv => {
-      val movieLens = new MovieLensComponent(databaseName)
+    case StorageType.fs_csv | StorageType.hdfs_csv => {
+      val movieLens = new MovieLensComponent(databaseName, storageType)
       ratings_df = Some(
         spark.read.option("header", "true").csv(movieLens.ratingsFile.toString)
       )

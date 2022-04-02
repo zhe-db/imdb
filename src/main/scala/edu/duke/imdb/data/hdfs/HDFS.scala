@@ -9,7 +9,7 @@ import org.apache.hadoop.io.compress._
 import _root_.edu.duke.imdb.components.ConfigComponent
 import edu.duke.imdb.data.DataSource
 
-trait HDFSComponent extends DataSource {
+trait HDFSStreamignFlow extends DataSource {
   val conf = new Configuration()
   val hdfsDomain = this.config.getString("hdfs.domain")
   val hdfsPort = this.config.getString("hdfs.port")

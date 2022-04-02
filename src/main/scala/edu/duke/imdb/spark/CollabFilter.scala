@@ -18,7 +18,7 @@ object CollabFilter extends ConfigComponent with SparkComponent {
     val movieLensLoader =
       new MovieLensSpark(
         databaseName = "ml-25m",
-        storageType = StorageType.fs_csv
+        storageType = StorageType.hdfs_csv
       )
 
     val ratings_df = movieLensLoader.ratings_df.get
