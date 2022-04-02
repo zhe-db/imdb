@@ -5,6 +5,10 @@ import java.nio.file.{Path, Paths}
 import edu.duke.imdb.components.SparkComponent
 import edu.duke.imdb.data.StorageType
 import org.apache.spark.sql.DataFrame
+import edu.duke.imdb.data.delta.tables.MovieLensRatingsDeltaTable
+import edu.duke.imdb.data.delta.tables.MovieLensMoviesDeltaTable
+import edu.duke.imdb.data.delta.tables.MovieLensLinksDeltaTable
+import edu.duke.imdb.data.delta.tables.MovieLensTagsDeltaTable
 
 trait MovieLens extends ConfigComponent {}
 
@@ -54,6 +58,12 @@ class MovieLensSpark(databaseName: String, storageType: StorageType.Storage)
       tags_df = Some(
         spark.read.option("header", "true").csv(movieLens.tagsFile.toString)
       )
+    }
+    case StorageType.fs_delta | StorageType.hdfs_delta => {
+      ratings_df = Some(new MovieLensRatingsDeltaTable().readData().toDF())
+      movies_df = Some(new MovieLensMoviesDeltaTable().readData().toDF())
+      links_df = Some(new MovieLensLinksDeltaTable().readData().toDF())
+      tags_df = Some(new MovieLensTagsDeltaTable().readData().toDF())
     }
   }
 }

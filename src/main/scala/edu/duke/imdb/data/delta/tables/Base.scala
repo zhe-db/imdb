@@ -12,7 +12,7 @@ class DeltaTableBase(
 ) extends SparkComponent
     with ConfigComponent {
   var savePath: String = this.config.getString("delta.save_path")
-  var tablePath: String = s"${this.savePath}/moviedetail"
+  var tablePath: String = s"${this.savePath}/${tableName}"
   val createTableSql = s"""
      CREATE TABLE IF NOT EXISTS default.${this.tableName} (
        ${this.tableSchema}
