@@ -2,6 +2,7 @@ package edu.duke.imdb.data.delta.tables
 
 import _root_.edu.duke.imdb.components._
 import _root_.edu.duke.imdb.data.delta.DeltaConnector
+import org.apache.spark.sql.DataFrame
 
 class DeltaTableBase(
     var tableName: String,
@@ -26,6 +27,10 @@ class DeltaTableBase(
       destTableName = tableName,
       primaryColumnName = primaryColumnName
     )
+  }
+
+  def readData(): DataFrame = {
+    return spark.read.format("delta").load(s"${savePath}/${tableName}")
   }
 
 }

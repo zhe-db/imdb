@@ -4,7 +4,7 @@ class UserRatingDeltaTable
     extends DeltaTableBase(
       tableName = "userratings",
       sourceTableName = "userratings",
-      primaryColumnName = "id",
+      primaryColumnName = "movie_id",
       tableSchema = s"""
          id STRING,
          user_id STRING,

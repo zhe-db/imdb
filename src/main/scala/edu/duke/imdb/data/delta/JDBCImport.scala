@@ -101,7 +101,7 @@ class JDBCImport(
       df.write
         .format("delta")
         .mode(SaveMode.Overwrite)
-        .saveAsTable(deltaTableToWrite)
+        .insertInto(deltaTableToWrite)
     }
   }
 

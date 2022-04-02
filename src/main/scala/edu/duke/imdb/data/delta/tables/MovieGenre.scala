@@ -9,6 +9,6 @@ class MoviedGenreDeltaTable
       primaryColumnName = "movie_id",
       tableSchema = s"""
         movie_id INT,
-        genre_id INTEGER
+        genre_id INT
       """
     ) {}

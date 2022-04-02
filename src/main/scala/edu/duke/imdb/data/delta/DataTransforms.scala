@@ -13,6 +13,6 @@ class DataTransforms(transformations: Seq[DataFrame => DataFrame]) {
     * @return
     *   \- modified by Seq of functions DataFrame
     */
-  def runTransform(df: DataFrame): DataFrame =
-    transformations.foldLeft(df)((v, f) => f(v))
+  def runTransform(df: DataFrame): DataFrame = df
+
 }
