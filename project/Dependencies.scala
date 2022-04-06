@@ -11,6 +11,7 @@ object Version {
   val scalaTest = "3.2.10"
   val delta = "1.1.0"
   val spark = "3.2.1"
+  val redis = "3.42"
 }
 
 object Library {
@@ -18,6 +19,7 @@ object Library {
   val akkaStream = "com.typesafe.akka" %% "akka-stream" % Version.akka
   val akkaSparyJson =
     "com.typesafe.akka" %% "akka-http-spray-json" % Version.akkaHttp
+  val akkaDD = "com.typesafe.akka" %% "akka-cluster-typed" % Version.akka
   val slick = "com.typesafe.slick" %% "slick" % Version.slick
   val slickHikariCP = "com.typesafe.slick" %% "slick-hikaricp" % Version.slick
   val slickCodegen = "com.typesafe.slick" %% "slick-codegen" % Version.slick
@@ -60,9 +62,6 @@ object Dependencies {
     slickCodegen,
     postgresql,
     akkaHttp,
-    // json4sNative,
-    // json4sJackson,
-    // akkaHttpJson4s,
     logbackClassic,
     scalaTest,
     codec,
@@ -76,7 +75,8 @@ object Dependencies {
     akkaStreamHDFS,
     spark,
     sparkStreaming,
-    sparkMLLib
+    sparkMLLib,
+    akkaDD
   )
 
 }
