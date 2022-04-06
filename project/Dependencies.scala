@@ -42,6 +42,9 @@ object Library {
   val hadoopClient = "org.apache.hadoop" % "hadoop-client" % "3.1.0"
   val parquet = "org.apache.parquet" % "parquet-hadoop" % "1.10.1"
   val spark = "org.apache.spark" %% "spark-sql" % Version.spark
+  val sparkStreaming =
+    "org.apache.spark" % "spark-streaming_2.12" % Version.spark % "provided"
+  val sparkMLLib = "org.apache.spark" %% "spark-mllib" % Version.spark
 }
 
 object Dependencies {
@@ -71,7 +74,9 @@ object Dependencies {
     parquet,
     akkaStreamContrib,
     akkaStreamHDFS,
-    spark
+    spark,
+    sparkStreaming,
+    sparkMLLib
   )
 
 }

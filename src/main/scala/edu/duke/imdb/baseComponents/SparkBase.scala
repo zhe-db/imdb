@@ -1,8 +1,11 @@
 package edu.duke.imdb.components
 
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.{SparkSession, SQLContext}
-import edu.duke.imdb.components.ConfigComponent
+import org.apache.spark._
+import org.apache.spark.streaming._
+import org.apache.spark.streaming.StreamingContext._ // not necessary since Spark 1.3
+
+import _root_.edu.duke.imdb.components.ConfigComponent
 
 trait SparkComponent extends ConfigComponent {
   val appName = this.config.getString("spark.appName")
@@ -22,4 +25,6 @@ trait SparkComponent extends ConfigComponent {
       "org.apache.spark.sql.delta.catalog.DeltaCatalog"
     )
     .getOrCreate()
+  implicit val ssc =
+    new StreamingContext(spark.sparkContext.getConf, Seconds(1))
 }

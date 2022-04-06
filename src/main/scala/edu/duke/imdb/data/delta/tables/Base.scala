@@ -3,6 +3,7 @@ package edu.duke.imdb.data.delta.tables
 import _root_.edu.duke.imdb.components._
 import _root_.edu.duke.imdb.data.delta.DeltaConnector
 import org.apache.spark.sql.DataFrame
+import io.delta.implicits._
 
 class DeltaTableBase(
     var tableName: String,
@@ -31,6 +32,14 @@ class DeltaTableBase(
 
   def readData(): DataFrame = {
     return spark.read.format("delta").load(s"${savePath}/${tableName}")
+  }
+
+  def addData(df: DataFrame): Unit = {
+    df.write.format("delta").mode("append").save(this.tablePath)
+  }
+
+  def batchWrite(df: DataFrame): Unit = {
+    df.write.format("delta").mode("append").save(this.tablePath)
   }
 
 }
