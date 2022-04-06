@@ -25,6 +25,4 @@ trait SparkComponent extends ConfigComponent {
       "org.apache.spark.sql.delta.catalog.DeltaCatalog"
     )
     .getOrCreate()
-  implicit val ssc =
-    new StreamingContext(spark.sparkContext.getConf, Seconds(1))
 }

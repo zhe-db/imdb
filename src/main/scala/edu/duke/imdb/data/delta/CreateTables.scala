@@ -28,19 +28,18 @@ object DeltaTables extends ConfigComponent {
   val ratingsTable = new MovieLensRatingsDeltaTable()
   val tagsTable = new MovieLensTagsDeltaTable()
 
-  def main(args: Array[String]): Unit =  {
+  def main(args: Array[String]): Unit = {
     linksTable.createTable()
     moviesTable.createTable()
     ratingsTable.createTable()
     tagsTable.createTable()
-    createTable()
-    movieCrewTable.readData().toDF().show(5)
-    movieCrewTable.readData().toDF().show(5)
-    movieGenreTable.readData().toDF().show(5)
-    linksTable.readData().toDF().show(5)
+    // createTable()
+    // movieCrewTable.readData().toDF().show(5)
+    // movieGenreTable.readData().toDF().show(5)
     moviesTable.readData().toDF().show(5)
     ratingsTable.readData().toDF().show(5)
     tagsTable.readData().toDF().show(5)
+    linksTable.readData().toDF().show(5)
   }
 
   def createTable() {

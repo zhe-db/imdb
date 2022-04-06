@@ -53,6 +53,12 @@ object CollabFilterTrainer extends ConfigComponent with SparkComponent {
     saveModel(model)
   }
 
+  def trainModel(rank: Int, numIterations: Int) {
+    val model: MatrixFactorizationModel =
+      ALS.train(trainingRDD, rank, numIterations, 0.01)
+    saveModel(model)
+  }
+
   def saveModel(model: MatrixFactorizationModel): Unit = {
     try {
       model.save(spark.sparkContext, modelPath)
