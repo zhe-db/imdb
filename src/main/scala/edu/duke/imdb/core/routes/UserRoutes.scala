@@ -22,7 +22,10 @@ import _root_.edu.duke.imdb.core.services.Authenticator
 import _root_.edu.duke.imdb.models.entity.UserRating
 import akka.actor.Status
 
-class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
+class UserRoutes(
+    userRegistry: ActorRef[UserRegistry.Command],
+    userReviewRoutes: Route
+)(implicit
     val system: ActorSystem[_]
 ) {
 
@@ -100,7 +103,6 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
             },
             post {
               entity(as[APIUser]) { user =>
-                println(user)
                 onSuccess(createUser(user.toUser())) { response =>
                   complete((StatusCodes.Created, response.maybeUser))
                 }
@@ -256,7 +258,8 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
               }
             )
           }
-        }
+        },
+        pathPrefix("review")(userReviewRoutes)
       )
       // #users-get-delete
 

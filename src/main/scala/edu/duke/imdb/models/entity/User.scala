@@ -119,6 +119,8 @@ case class UserReview(
     contents: Option[String] = None
 )
 
+case class UserReviews(reviews: Seq[UserReview])
+
 case class UserMovie(userId: java.util.UUID, movieId: Int)
 
 case class APIUserReview(

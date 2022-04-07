@@ -57,14 +57,23 @@ object App extends ConfigComponent with DatabaseComponent with CORSHandler {
         context.spawn(GenreRegistry(), "GenreRegistryActor")
       val movieRegistryActor =
         context.spawn(MovieRegistry(), "MovieRegistryActor")
+      val userReviewActor =
+        context.spawn(UserReviewActor(), "UserReviewActor")
 
       context.watch(userRegistryActor)
       context.watch(genreRegistryActor)
       context.watch(movieRegistryActor)
 
-      val userRoutes = new UserRoutes(userRegistryActor)(context.system)
       val genreRoutes = new GenreRoutes(genreRegistryActor)(context.system)
       val movieRoutes = new MovieRoutes(movieRegistryActor)(context.system)
+      val userReviewRoutes =
+        new UserReviewRoutes(userReviewActor)(context.system)
+
+      val userRoutes =
+        new UserRoutes(userRegistryActor, userReviewActor.reviewRoutes)(
+          context.system
+        )
+
       val corsSettings = CorsSettings.defaultSettings
         .withAllowedOrigins(
           HttpOriginMatcher.*
