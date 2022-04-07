@@ -44,6 +44,11 @@ object UserReviewActor extends DatabaseComponent {
       replyTo: ActorRef[StatusResponse]
   ) extends Command
 
+  final case class DeleteMovieReviewByMovie(
+      movieId: Int,
+      replyTo: ActorRef[StatusResponse]
+  ) extends Command
+
   final case class DeleteUserMovieReview(
       userMovie: UserMovie,
       replyTo: ActorRef[StatusResponse]
@@ -102,6 +107,24 @@ object UserReviewActor extends DatabaseComponent {
         Behaviors.same
 
       case DeleteUserMovieReviewById(reviewId, replyTo) =>
+        userReviewMovieRepo.deleteReview(reviewId).onComplete {
+          case Success(rows) =>
+            replyTo ! StatusResponse(true)
+          case Failure(f) =>
+            replyTo ! StatusResponse(false)
+        }
+        Behaviors.same
+
+      case DeleteMovieReviewByMovie(movieId, replyTo) =>
+        userReviewMovieRepo.deleteMovie(movieId).onComplete {
+          case Success(rows) =>
+            replyTo ! StatusResponse(true)
+          case Failure(f) =>
+            replyTo ! StatusResponse(false)
+        }
+        Behaviors.same
+
+      case DeleteUserMovieReview(reviewId, replyTo) =>
         userReviewMovieRepo.deleteReview(reviewId).onComplete {
           case Success(rows) =>
             replyTo ! StatusResponse(true)

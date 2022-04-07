@@ -45,31 +45,98 @@ class UserReviewRoutes(
   def addMovieReview(review: UserReview): Future[StatusResponse] =
     userReviewActor.ask(AddUserMovieReview(review, _))
 
-  def editMovieReview(review: APIUserReview): Future[StatusResponse] = userReviewActor.ask(EditUserMovieReview(review, _))
+  def editMovieReview(review: APIUserReview): Future[StatusResponse] =
+    userReviewActor.ask(EditUserMovieReview(review, _))
+
+  def deleteUserReview(reviewId: java.util.UUID): Future[StatusResponse] =
+    userReviewActor.ask(DeleteUserMovieReviewById(reviewId, _))
+
+  def getUserReviews(
+      userId: java.util.UUID
+  ): Future[GetUserMovieReviewsResponse] =
+    userReviewActor.ask(GetUserMovieReviews(userId, _))
+
+  def deleteReviewsByUser(userId: java.util.UUID): Future[StatusResponse] =
+    userReviewActor.ask(DeleteReviewsByUser(userId, _))
+
+  def deleteReviewsByMovie(movieId: Int): Future[StatusResponse] =
+    userReviewActor.ask(DeleteMovieReviewByMovie(movieId, _))
+
+  def getReviewsByMovie(movieId: Int): Future[GetUserMovieReviewsResponse] =
+    userReviewActor.ask(GetMovieReviewsByMovie(movieId, _))
 
   val reviewRoutes: Route = concat(
-    concat(
-      get {
-        parameters("reviewId".as[java.util.UUID]) { reviewId =>
-          onSuccess(getMovieReview(reviewId)) { response =>
-            complete((StatusCodes.OK, response.maybeReview))
+    path("list") {
+      concat(
+        path("user") {
+          concat(
+            get {
+              parameters("userId".as[java.util.UUID]) { userId =>
+                onSuccess(getUserReviews(userId)) { response =>
+                  complete((StatusCodes.OK, response.maybeReviews))
+                }
+              }
+            },
+            delete {
+              parameters("userId".as[java.util.UUID]) { userId =>
+                onSuccess(deleteReviewsByUser(userId)) { response =>
+                  complete((StatusCodes.OK, s"${response.success}"))
+                }
+              }
+            }
+          )
+        },
+        path("movie") {
+          concat(
+            get {
+              parameters("movieId".as[Int]) { movieId =>
+                onSuccess(getReviewsByMovie(movieId)) { response =>
+                  complete((StatusCodes.OK, response.maybeReviews))
+                }
+              }
+            },
+            delete {
+              parameters("movieId".as[Int]) { movieId =>
+                onSuccess(deleteReviewsByMovie(movieId)) { response =>
+                  complete((StatusCodes.OK, s"${response.success}"))
+                }
+              }
+            }
+          )
+        }
+      )
+    },
+    pathEnd {
+      concat(
+        get {
+          parameters("reviewId".as[java.util.UUID]) { reviewId =>
+            onSuccess(getMovieReview(reviewId)) { response =>
+              complete((StatusCodes.OK, response.maybeReview))
+            }
+          }
+        },
+        post {
+          entity(as[APIUserReview]) { userReview =>
+            onSuccess(addMovieReview(userReview.toUserReview())) { response =>
+              complete((StatusCodes.Created, s"${response.success}"))
+            }
+          }
+        },
+        put {
+          entity(as[APIUserReview]) { userReview =>
+            onSuccess(editMovieReview(userReview)) { response =>
+              complete((StatusCodes.OK, s"${response.success}"))
+            }
+          }
+        },
+        delete {
+          parameters("reviewId".as[java.util.UUID]) { reviewId =>
+            onSuccess(deleteUserReview(reviewId)) { response =>
+              complete((StatusCodes.OK, s"${response.success}"))
+            }
           }
         }
-      },
-      post {
-        entity(as[APIUserReview]) { userReview =>
-          onSuccess(addMovieReview(userReview.toUserReview())) { response =>
-            complete((StatusCodes.Created, s"${response.success}"))
-          }
-        }
-      },
-      put {
-        entity(as[APIUserReview]) { userReview =>
-          onSuccess(editMovieReview(userReview)) { response =>
-            complete((StatusCodes.OK, s"${response.success}"))
-          }
-        }
-      }
-    )
+      )
+    }
   )
 }
