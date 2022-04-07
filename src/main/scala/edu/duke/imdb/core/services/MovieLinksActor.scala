@@ -64,17 +64,11 @@ object MovieLinksActor extends ConfigComponent {
       id2linkStore: ActorRef[MovieLinksCache.Command],
       source: ActorRef[MovieLinksCache.Response]
   ): Unit = {
-    val df = linksTable.readData().head(10)
+    val df = linksTable.readData()
     df.foreach { (row) =>
       val movieLinkId = row.getString(0)
       val movieId = row.getString(2)
       link2idStore ! MovieLinksCache.PutInCache(movieLinkId, movieId)
-      id2linkStore ! MovieLinksCache.PutInCache(movieId, movieLinkId)
-
-      link2idStore ! MovieLinksCache
-        .GetFromCache(movieLinkId, source)
-      id2linkStore ! MovieLinksCache
-        .GetFromCache(movieId, source)
     }
   }
 }

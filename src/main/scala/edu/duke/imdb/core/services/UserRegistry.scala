@@ -50,6 +50,11 @@ object UserRegistry extends DatabaseComponent {
       replyTo: ActorRef[CreateUserMovieRatingResponse]
   ) extends Command
 
+  final case class DeleteUserRating(
+      userMovie: UserMovie,
+      replyTo: ActorRef[DeleteUserRatingResponse]
+  ) extends Command
+
   final case class GetUserFavGenres(
       userId: java.util.UUID,
       replyTo: ActorRef[GetUserFavGenresResponse]
@@ -77,6 +82,8 @@ object UserRegistry extends DatabaseComponent {
   final case class CreateUserMovieRatingResponse(
       maybeRating: Option[UserRating]
   )
+
+  final case class DeleteUserRatingResponse(rows: Int)
 
   final case class EditUserMovieRatingResponse(
       maybeRating: Option[APIUserRating]
@@ -194,6 +201,15 @@ object UserRegistry extends DatabaseComponent {
                 )
               )
           }
+        Behaviors.same
+
+      case DeleteUserRating(userMovie, replyTo) =>
+        userRatingRepo.deleteRating(userMovie).onComplete {
+          case Success(rows) =>
+            replyTo ! DeleteUserRatingResponse(rows)
+          case Failure(f) =>
+            replyTo ! DeleteUserRatingResponse(0)
+        }
         Behaviors.same
     }
 }

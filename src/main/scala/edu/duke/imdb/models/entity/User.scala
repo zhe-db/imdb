@@ -119,12 +119,14 @@ case class UserReview(
     contents: Option[String] = None
 )
 
+case class UserMovie(userId: java.util.UUID, movieId: Int)
+
 case class APIUserReview(
     userId: java.util.UUID,
     movieId: Int,
     contents: String
 ) {
-  def toUserReview(): UserReview  = {
+  def toUserReview(): UserReview = {
     val id: java.util.UUID = randomUUID
     return UserReview(id, userId, Some(movieId), Some(contents))
   }

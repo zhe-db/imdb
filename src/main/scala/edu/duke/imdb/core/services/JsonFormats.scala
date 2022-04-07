@@ -71,4 +71,5 @@ object JsonFormats {
   implicit val movieCrewsJsonFormat = jsonFormat1(MovieCrews)
   implicit val completeMovieJsonFormat = jsonFormat3(CompleteMovie)
   implicit val userInfoJsonFormat = jsonFormat2(UserInfo)
+  implicit val userMovieJsonFormat = jsonFormat2(UserMovie)
 }

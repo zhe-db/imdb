@@ -38,19 +38,28 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
 
   def getUsers(): Future[Users] =
     userRegistry.ask(GetUsers)
+
   def getUser(name: String): Future[GetUserResponse] =
     userRegistry.ask(GetUser(name, _))
+
   def createUser(user: User): Future[CreateUserResponse] =
     userRegistry
       .ask(CreateUser(user, _))
+
   def deleteUser(name: String): Future[ActionPerformed] =
     userRegistry.ask(DeleteUser(name, _))
+
   def updateUserLastLogin(userId: java.util.UUID): Future[ActionPerformed] =
     userRegistry.ask(UpdateUserLastLogin(userId, _))
+
   def createUserRating(
       rating: UserRating
   ): Future[CreateUserMovieRatingResponse] =
     userRegistry.ask(RateMovie(rating, _))
+
+  def deleteUserRating(userMovie: UserMovie): Future[DeleteUserRatingResponse] =
+    userRegistry.ask(DeleteUserRating(userMovie, _))
+
   def editUserRating(
       rating: APIUserRating
   ): Future[EditUserMovieRatingResponse] =
@@ -233,6 +242,15 @@ class UserRoutes(userRegistry: ActorRef[UserRegistry.Command])(implicit
                 entity(as[APIUserRating]) { rating =>
                   onSuccess(editUserRating(rating)) { response =>
                     complete((StatusCodes.OK, response.maybeRating))
+                  }
+                }
+              },
+              delete {
+                entity(as[UserMovie]) { rating =>
+                  onSuccess(deleteUserRating(rating)) { response =>
+                    complete(
+                      (StatusCodes.OK, s"${response.rows} row(s) deleted")
+                    )
                   }
                 }
               }
