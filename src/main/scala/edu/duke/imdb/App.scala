@@ -70,7 +70,7 @@ object App extends ConfigComponent with DatabaseComponent with CORSHandler {
         new UserReviewRoutes(userReviewActor)(context.system)
 
       val userRoutes =
-        new UserRoutes(userRegistryActor, userReviewActor.reviewRoutes)(
+        new UserRoutes(userRegistryActor, userReviewRoutes.reviewRoutes)(
           context.system
         )
 

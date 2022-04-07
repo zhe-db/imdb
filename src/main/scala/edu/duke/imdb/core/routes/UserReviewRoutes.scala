@@ -42,7 +42,7 @@ class UserReviewRoutes(
   ): Future[GetUserMovieReviewResponse] =
     userReviewActor.ask(GetMovieReview(reviewId, _))
 
-  def addMovieReview(review: UserReview): Future[StatusResponse] =
+  def addMovieReview(review: UserReview): Future[GetUserMovieReviewResponse] =
     userReviewActor.ask(AddUserMovieReview(review, _))
 
   def editMovieReview(review: APIUserReview): Future[StatusResponse] =
@@ -66,43 +66,47 @@ class UserReviewRoutes(
     userReviewActor.ask(GetMovieReviewsByMovie(movieId, _))
 
   val reviewRoutes: Route = concat(
-    path("list") {
+    pathPrefix("list") {
       concat(
         path("user") {
-          concat(
-            get {
-              parameters("userId".as[java.util.UUID]) { userId =>
-                onSuccess(getUserReviews(userId)) { response =>
-                  complete((StatusCodes.OK, response.maybeReviews))
+          pathEnd {
+            concat(
+              get {
+                parameters("userId".as[java.util.UUID]) { userId =>
+                  onSuccess(getUserReviews(userId)) { response =>
+                    complete((StatusCodes.OK, response.maybeReviews))
+                  }
+                }
+              },
+              delete {
+                parameters("userId".as[java.util.UUID]) { userId =>
+                  onSuccess(deleteReviewsByUser(userId)) { response =>
+                    complete((StatusCodes.OK, s"${response.success}"))
+                  }
                 }
               }
-            },
-            delete {
-              parameters("userId".as[java.util.UUID]) { userId =>
-                onSuccess(deleteReviewsByUser(userId)) { response =>
-                  complete((StatusCodes.OK, s"${response.success}"))
-                }
-              }
-            }
-          )
+            )
+          }
         },
         path("movie") {
-          concat(
-            get {
-              parameters("movieId".as[Int]) { movieId =>
-                onSuccess(getReviewsByMovie(movieId)) { response =>
-                  complete((StatusCodes.OK, response.maybeReviews))
+          pathEnd {
+            concat(
+              get {
+                parameters("movieId".as[Int]) { movieId =>
+                  onSuccess(getReviewsByMovie(movieId)) { response =>
+                    complete((StatusCodes.OK, response.maybeReviews))
+                  }
+                }
+              },
+              delete {
+                parameters("movieId".as[Int]) { movieId =>
+                  onSuccess(deleteReviewsByMovie(movieId)) { response =>
+                    complete((StatusCodes.OK, s"${response.success}"))
+                  }
                 }
               }
-            },
-            delete {
-              parameters("movieId".as[Int]) { movieId =>
-                onSuccess(deleteReviewsByMovie(movieId)) { response =>
-                  complete((StatusCodes.OK, s"${response.success}"))
-                }
-              }
-            }
-          )
+            )
+          }
         }
       )
     },
@@ -118,7 +122,7 @@ class UserReviewRoutes(
         post {
           entity(as[APIUserReview]) { userReview =>
             onSuccess(addMovieReview(userReview.toUserReview())) { response =>
-              complete((StatusCodes.Created, s"${response.success}"))
+              complete((StatusCodes.Created, response.maybeReview))
             }
           }
         },
