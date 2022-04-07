@@ -73,4 +73,5 @@ object JsonFormats {
   implicit val userInfoJsonFormat = jsonFormat2(UserInfo)
   implicit val userMovieJsonFormat = jsonFormat2(UserMovie)
   implicit val userReviewsJsonFormat = jsonFormat1(UserReviews)
+  implicit val userRatingsJsonFormat = jsonFormat1(UserRatings)
 }

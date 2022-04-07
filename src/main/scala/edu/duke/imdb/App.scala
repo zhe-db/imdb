@@ -59,6 +59,7 @@ object App extends ConfigComponent with DatabaseComponent with CORSHandler {
         context.spawn(MovieRegistry(), "MovieRegistryActor")
       val userReviewActor =
         context.spawn(UserReviewActor(), "UserReviewActor")
+      val userRatingActor = context.spawn(UserRatingActor(), "UsrRatingActor")
 
       context.watch(userRegistryActor)
       context.watch(genreRegistryActor)
@@ -68,9 +69,15 @@ object App extends ConfigComponent with DatabaseComponent with CORSHandler {
       val movieRoutes = new MovieRoutes(movieRegistryActor)(context.system)
       val userReviewRoutes =
         new UserReviewRoutes(userReviewActor)(context.system)
+      val userRatingRoutes =
+        new UserRatingRoutes(userRatingActor)(context.system)
 
       val userRoutes =
-        new UserRoutes(userRegistryActor, userReviewRoutes.reviewRoutes)(
+        new UserRoutes(
+          userRegistryActor,
+          userReviewRoutes.reviewRoutes,
+          userRatingRoutes.ratingRoutes
+        )(
           context.system
         )
 

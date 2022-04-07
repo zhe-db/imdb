@@ -24,7 +24,8 @@ import akka.actor.Status
 
 class UserRoutes(
     userRegistry: ActorRef[UserRegistry.Command],
-    userReviewRoutes: Route
+    userReviewRoutes: Route,
+    userRatingRoutes: Route
 )(implicit
     val system: ActorSystem[_]
 ) {
@@ -229,36 +230,7 @@ class UserRoutes(
             }
           )
         },
-        pathPrefix("rating") {
-          pathEnd {
-            concat(
-              post {
-                entity(as[APIUserRating]) { rating =>
-                  onSuccess(createUserRating(rating.toUserRating())) {
-                    response =>
-                      complete((StatusCodes.Created, response.maybeRating))
-                  }
-                }
-              },
-              put {
-                entity(as[APIUserRating]) { rating =>
-                  onSuccess(editUserRating(rating)) { response =>
-                    complete((StatusCodes.OK, response.maybeRating))
-                  }
-                }
-              },
-              delete {
-                entity(as[UserMovie]) { rating =>
-                  onSuccess(deleteUserRating(rating)) { response =>
-                    complete(
-                      (StatusCodes.OK, s"${response.rows} row(s) deleted")
-                    )
-                  }
-                }
-              }
-            )
-          }
-        },
+        pathPrefix("rating")(userRatingRoutes),
         pathPrefix("review")(userReviewRoutes)
       )
       // #users-get-delete

@@ -91,6 +91,8 @@ case class UserRating(
     rating: Option[Double] = None
 )
 
+case class UserRatings(ratings: Seq[UserRating])
+
 case class APIUserRating(
     userId: java.util.UUID,
     movieId: Int,

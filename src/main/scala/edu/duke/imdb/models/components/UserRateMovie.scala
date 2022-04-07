@@ -14,6 +14,7 @@ trait UserRateMovieRepositoryComponent {
   def deleteRating(userMovie: UserMovie): Future[Int]
   def editRating(userRating: APIUserRating): Future[Int]
   def getRating(userRatingId: java.util.UUID): Future[Option[UserRating]]
+  def deleteRating(ratingId: java.util.UUID): Future[Int]
   def deleteUser(userId: java.util.UUID): Future[Int]
   def deleteMovie(movieId: Int): Future[Int]
   def getUserRatings(userId: java.util.UUID): Future[Seq[UserRating]]
@@ -36,6 +37,10 @@ class UserRateMovieRepository(db: Database)
         row.userId === userMovie.userId && row.movieId === userMovie.movieId
       )
       .delete
+  }
+
+  override def deleteRating(ratingId: java.util.UUID): Future[Int] = db.run {
+    UserRateMovieRows.filter(row => row.id === ratingId).delete
   }
 
   override def getRating(userRatingId: UUID): Future[Option[UserRating]] =
