@@ -1,2 +1,3 @@
 
-hadoop fs -put ../ml-25m/*  /ml-25m
+hadoop fs -mkdir /ml-1m
+hadoop fs -put ../ml-1m/* /ml-1m

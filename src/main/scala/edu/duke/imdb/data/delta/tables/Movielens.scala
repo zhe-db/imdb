@@ -25,7 +25,7 @@ class MovieLensDeltaTable(tableName: String, tableSchema: String)
     )
     val df = tableName match {
       case "links"   => movieLensComp.links_df
-      case "tags"    => movieLensComp.tags_df
+      case "users"   => movieLensComp.users_df
       case "ratings" => movieLensComp.ratings_df
       case "movies"  => movieLensComp.movies_df
       case _         => movieLensComp.movies_df
@@ -47,5 +47,5 @@ class MovieLensMoviesDeltaTable
 class MovieLensRatingsDeltaTable
     extends MovieLensDeltaTable(tableName = "ratings", tableSchema = "")
 
-class MovieLensTagsDeltaTable
-    extends MovieLensDeltaTable(tableName = "tags", tableSchema = "")
+class MovieLensUsersDeltaTable
+    extends MovieLensDeltaTable(tableName = "users", tableSchema = "")

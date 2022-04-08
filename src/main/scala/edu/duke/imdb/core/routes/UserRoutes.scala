@@ -56,19 +56,6 @@ class UserRoutes(
   def updateUserLastLogin(userId: java.util.UUID): Future[ActionPerformed] =
     userRegistry.ask(UpdateUserLastLogin(userId, _))
 
-  def createUserRating(
-      rating: UserRating
-  ): Future[CreateUserMovieRatingResponse] =
-    userRegistry.ask(RateMovie(rating, _))
-
-  def deleteUserRating(userMovie: UserMovie): Future[DeleteUserRatingResponse] =
-    userRegistry.ask(DeleteUserRating(userMovie, _))
-
-  def editUserRating(
-      rating: APIUserRating
-  ): Future[EditUserMovieRatingResponse] =
-    userRegistry.ask(EditUserMovieRating(rating, _))
-
   def getUserFavouriteGenres(
       userId: java.util.UUID
   ): Future[GetUserFavGenresResponse] =
