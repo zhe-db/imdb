@@ -12,6 +12,7 @@ import edu.duke.imdb.data.delta.tables.MovieLensRatingsDeltaTable
 import edu.duke.imdb.data.delta.tables.MovieLensMoviesDeltaTable
 import edu.duke.imdb.data.delta.tables.MovieLensLinksDeltaTable
 import edu.duke.imdb.data.delta.tables.MovieLensUsersDeltaTable
+import edu.duke.imdb.data.delta.tables.MovieLensRatingsMappedDeltaTable
 
 trait MovieLens extends ConfigComponent {}
 
@@ -38,6 +39,8 @@ class MovieLensComponent(datasetName: String, storageType: StorageType.Storage)
     s"${datasetPath}/${this.config.getString(s"movielens.${datasetName}.users")}"
   val usersMappingsFile =
     s"${datasetPath}/${this.config.getString(s"movielens.${datasetName}.usersMapping")}"
+  val ratingsMappedFile =
+    s"${datasetPath}/${this.config.getString(s"movielens.${datasetName}.ratingsMapped")}"
 }
 
 class MovieLensSpark(databaseName: String, storageType: StorageType.Storage)
@@ -48,6 +51,7 @@ class MovieLensSpark(databaseName: String, storageType: StorageType.Storage)
   var links_df: Option[DataFrame] = None
   var users_df: Option[DataFrame] = None
   var usersMappings_df: Option[DataFrame] = None
+  var ratingsMapped_df: Option[DataFrame] = None
   import spark.sqlContext.implicits._
 
   storageType match {
@@ -83,7 +87,7 @@ class MovieLensSpark(databaseName: String, storageType: StorageType.Storage)
       )
       users_df = Some(
         spark.sqlContext.read
-          .text(movieLens.ratingsFile.toString)
+          .text(movieLens.usersFile.toString)
           .select(split($"value", "::").as("value"))
           .select(
             $"value".getItem(0).cast(IntegerType).as("userId"),
@@ -93,12 +97,20 @@ class MovieLensSpark(databaseName: String, storageType: StorageType.Storage)
             $"value".getItem(3).cast(StringType).as("zipCode")
           )
       )
+      ratingsMapped_df = Some(
+        spark.read
+          .option("header", "true")
+          .csv(movieLens.ratingsMappedFile.toString)
+      )
     }
     case StorageType.fs_delta | StorageType.hdfs_delta => {
       ratings_df = Some(new MovieLensRatingsDeltaTable().readData().toDF())
       movies_df = Some(new MovieLensMoviesDeltaTable().readData().toDF())
       links_df = Some(new MovieLensLinksDeltaTable().readData().toDF())
       users_df = Some(new MovieLensUsersDeltaTable().readData().toDF())
+      ratingsMapped_df = Some(
+        new MovieLensRatingsMappedDeltaTable().readData().toDF()
+      )
     }
   }
 }

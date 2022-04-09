@@ -20,7 +20,7 @@ class MovieLensDeltaTable(tableName: String, tableSchema: String)
 
   def createTable() {
     val movieLensComp = new MovieLensSpark(
-      databaseName = "ml-25m",
+      databaseName = "ml-1m",
       storageType = StorageType.fs_csv
     )
     val df = tableName match {
@@ -49,3 +49,6 @@ class MovieLensRatingsDeltaTable
 
 class MovieLensUsersDeltaTable
     extends MovieLensDeltaTable(tableName = "users", tableSchema = "")
+
+class MovieLensRatingsMappedDeltaTable
+    extends MovieLensDeltaTable(tableName = "ratingsMapped", tableSchema = "")

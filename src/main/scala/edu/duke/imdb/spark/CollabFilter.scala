@@ -26,20 +26,20 @@ object CollabFilterTrainer extends ConfigComponent with SparkComponent {
 
   val movieLensLoader =
     new MovieLensSpark(
-      databaseName = "ml-25m",
-      storageType = StorageType.hdfs_csv
+      databaseName = "ml-1m",
+      storageType = StorageType.fs_csv
     )
 
   val ratings_df = movieLensLoader.ratings_df.get
-
   val movies_df = movieLensLoader.movies_df.get
+  val ratingsMapped_df = movieLensLoader.ratingsMapped_df.get
+  val normalizedRatings = ratingsMapped_df
     .select(
-      col("movieId"),
-      col("title"),
-      split(col("genres"), "\\|").as("genres")
+      $"userId".as("user"),
+      $"ratings".as("rating"),
+      $"movieId".as("product")
     )
-
-  val set = ratings_df.randomSplit(
+  val set = normalizedRatings.randomSplit(
     Array(trainingSetPercentage, 1 - trainingSetPercentage),
     seed = 12345
   )
@@ -48,9 +48,7 @@ object CollabFilterTrainer extends ConfigComponent with SparkComponent {
   val trainingRDD = training.as[Rating].rdd
 
   def main(args: Array[String]): Unit = {
-    val model: MatrixFactorizationModel =
-      ALS.train(trainingRDD, rank, numIterations, 0.01)
-    saveModel(model)
+    ratingsMapped_df.show(100)
   }
 
   def trainModel(rank: Int, numIterations: Int) {

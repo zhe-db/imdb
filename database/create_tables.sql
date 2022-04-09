@@ -4,6 +4,7 @@ CREATE EXTENSION pgcrypto;
 
 CREATE TABLE IF NOT EXISTS users (
   user_id uuid DEFAULT uuid_generate_v4 () PRIMARY KEY,
+  recommend_index SERIAL,
   name varchar(250) NOT NULL,
   email citext UNIQUE NOT NULL,
   password TEXT NOT NULL,

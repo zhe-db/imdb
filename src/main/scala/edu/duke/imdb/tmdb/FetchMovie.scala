@@ -17,8 +17,13 @@ import _root_.edu.duke.imdb.tmdb.client.TmdbClient
 import edu.duke.imdb.models.entity
 import _root_.edu.duke.imdb.models.components._
 import _root_.edu.duke.imdb.components._
+import edu.duke.imdb.data.delta.tables.ml.MovieLensSpark
+import edu.duke.imdb.data.StorageType
 
-object FetchMovie extends ConfigComponent with DatabaseComponent {
+object FetchMovie
+    extends ConfigComponent
+    with DatabaseComponent
+    with SparkComponent {
   val apiKey = config.getString("tmdb.apiKey")
   val movieRepo = new MovieRepository(this.db)
   val genreRepo = new GenreRepository(this.db)
@@ -30,6 +35,23 @@ object FetchMovie extends ConfigComponent with DatabaseComponent {
   val defaultDate = dateFormat.parse("1970-01-01")
 
   val tmdbClient = TmdbClient(apiKey, "en-US")
+
+  def main(args: Array[String]): Unit = {
+
+    implicit val ec: ExecutionContext = scala.concurrent.ExecutionContext.global
+    val databaseName = "ml-1m"
+    val movieLensLoader =
+      new MovieLensSpark(
+        databaseName = databaseName,
+        storageType = StorageType.fs_csv
+      )
+    val links_df = movieLensLoader.links_df.get.collect
+    links_df.foreach { row =>
+      if (row.getString(2) != "") {
+        fetchMovie(row.getString(2).toInt)
+      }
+    }
+  }
 
   def fetchGenres(): Seq[Int] = {
 
