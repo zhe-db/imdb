@@ -33,6 +33,12 @@ trait MovieRepositoryComponent {
 
   def getAllMoviesForRecommendation()
       : DatabasePublisher[(MovieDetailRow, Int, Int)]
+  def getMoviesByRating(
+      rating: Double,
+      sortKey: String,
+      limit: Int,
+      offset: Int
+  ): Future[PaginatedResult[MovieDetailRow]]
 }
 
 class MovieRepository(db: Database) extends MovieRepositoryComponent {
@@ -114,5 +120,32 @@ class MovieRepository(db: Database) extends MovieRepositoryComponent {
         MovieDetailRows join MovieGenreRows on (_.id === _.movieId) join MovieCrewRows on (_._1.id === _.movieId)
     } yield (movie, genre.genreId, crew.crewId))
     db.stream(query.result)
+  }
+
+  override def getMoviesByRating(
+      rating: Double,
+      sortKey: String,
+      limit: Int,
+      offset: Int
+  ): Future[PaginatedResult[MovieDetailRow]] = db.run {
+    val q = MovieDetailRows
+      .filter(_.voteAverage >= rating)
+
+    val q_sort = sortKey match {
+      case "popularity.desc"   => q.sortBy(_.popularity.desc)
+      case "vote_average.desc" => q.sortBy(_.voteAverage.desc)
+      case "vote_count.desc"   => q.sortBy(_.voteCount.desc)
+      case "title.desc"        => q.sortBy(_.title.desc)
+      case "release_date.desc" => q.sortBy(_.releaseDate.desc)
+      case _                   => q
+    }
+    for {
+      numberOfRows <- q_sort.length.result
+      res <- q_sort.drop(offset).take(limit).result
+    } yield PaginatedResult(
+      totalCount = numberOfRows,
+      entities = res.toList,
+      hasNextPage = numberOfRows - (offset + limit) > 0
+    )
   }
 }

@@ -178,19 +178,7 @@ class UserRoutes(
                   realm = "secure",
                   Authenticator.UserAuthenticatorAsync
                 ) { user =>
-                  if (user.email == email)
-                    onSuccess(getUser(email)) { response =>
-                      complete(response.maybeUser)
-                    }
-                  else {
-                    complete(
-                      HttpResponse(
-                        StatusCodes.Forbidden,
-                        entity = "No Access To That Profile"
-                      )
-                    )
-                  }
-
+                  complete((StatusCodes.OK, user))
                 }
               }
               // #retrieve-user-info

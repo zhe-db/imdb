@@ -51,6 +51,14 @@ object MovieRegistry extends DatabaseComponent {
       replyTo: ActorRef[ReviewMovieResponse]
   ) extends Command
 
+  final case class GetMoviesByRating(
+      rating: Double,
+      sortKey: String,
+      limit: Int,
+      page: Int,
+      replyTo: ActorRef[PaginatedMoviesResponse]
+  ) extends Command
+
   final case class GetMovieResponse(maybeMovie: Option[MovieDetailRow])
       extends Command
 
@@ -63,6 +71,10 @@ object MovieRegistry extends DatabaseComponent {
   final case class RateMovieResponse(result: String)
 
   final case class ReviewMovieResponse(result: String)
+
+  final case class PaginatedMoviesResponse(
+      movies: PaginatedResult[MovieDetailRow]
+  )
 
   def apply(): Behavior[Command] =
     Behaviors.receiveMessage {
@@ -104,6 +116,19 @@ object MovieRegistry extends DatabaseComponent {
           case Failure(f) =>
             replyTo ! new ReviewMovieResponse(f.toString())
         }
+        Behaviors.same
+
+      case GetMoviesByRating(rating, sortKey, limit, page, replyTo) =>
+        movieRepo
+          .getMoviesByRating(rating, sortKey, limit, page)
+          .onComplete {
+            case Success(res) =>
+              replyTo ! PaginatedMoviesResponse(res)
+            case Failure(f) =>
+              replyTo ! PaginatedMoviesResponse(
+                new PaginatedResult(0, List.empty[MovieDetailRow], false)
+              )
+          }
         Behaviors.same
     }
 

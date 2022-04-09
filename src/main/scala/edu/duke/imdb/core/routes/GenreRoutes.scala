@@ -102,25 +102,27 @@ class GenreRoutes(genreRegistry: ActorRef[GenreRegistry.Command])(implicit
             }
           )
         },
-        path("detail") {
+        pathPrefix("detail") {
           path(Segment) { genreId =>
-            concat(
-              get {
-                onSuccess(getGenre(genreId.toInt)) { response =>
-                  complete((StatusCodes.OK, response.maybeGenre))
-                }
-              },
-              delete {
-                authenticateBasicAsync(
-                  realm = "secure",
-                  Authenticator.UserAuthenticatorAsync
-                ) { user =>
-                  onSuccess(deleteGenre(genreId.toInt)) { performed =>
-                    complete((StatusCodes.OK, performed))
+            pathEnd {
+              concat(
+                get {
+                  onSuccess(getGenre(genreId.toInt)) { response =>
+                    complete((StatusCodes.OK, response.maybeGenre))
+                  }
+                },
+                delete {
+                  authenticateBasicAsync(
+                    realm = "secure",
+                    Authenticator.UserAuthenticatorAsync
+                  ) { user =>
+                    onSuccess(deleteGenre(genreId.toInt)) { performed =>
+                      complete((StatusCodes.OK, performed))
+                    }
                   }
                 }
-              }
-            )
+              )
+            }
           }
         }
       )

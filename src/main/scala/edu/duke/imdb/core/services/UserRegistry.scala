@@ -146,7 +146,7 @@ object UserRegistry extends DatabaseComponent {
             replyTo ! GetUserInfoResponse(
               Some(new UserInfo(user.name, user.createdOn))
             )
-          case Failure(f) =>
+          case _ =>
             replyTo ! GetUserInfoResponse(None)
         }
         Behaviors.same

@@ -39,16 +39,13 @@ class MovieRoutes(movieRegistry: ActorRef[MovieRegistry.Command])(implicit
   def getCompleteMovie(movieId: Int): Future[CompleteMovieResponse] =
     movieRegistry.ask(GetCompleteMovie(movieId, _))
 
-  def likeMovie(
-      userFavMovie: APIUserFavouriteMovie
-  ): Future[LikeMovieResponse] =
-    movieRegistry.ask(LikeMovie(userFavMovie, _))
-
-  def rateMovie(userRating: APIUserRating): Future[RateMovieResponse] =
-    movieRegistry.ask(RateMovie(userRating, _))
-
-  def reviewMovie(userReview: APIUserReview): Future[ReviewMovieResponse] =
-    movieRegistry.ask(ReviewMovie(userReview, _))
+  def getMoviesByRating(
+      rating: Double,
+      sortKey: String,
+      page: Int,
+      limit: Int
+  ): Future[PaginatedMoviesResponse] =
+    movieRegistry.ask(GetMoviesByRating(rating, sortKey, limit, page, _))
 
   val movieRoutes: Route =
     pathPrefix("movies") {
@@ -62,44 +59,30 @@ class MovieRoutes(movieRegistry: ActorRef[MovieRegistry.Command])(implicit
             }
           }
         },
-        path("like") {
-          pathEnd {
-            concat {
-              post {
-                entity(as[APIUserFavouriteMovie]) { userFavMovie =>
-                  onSuccess(likeMovie(userFavMovie)) { response =>
-                    complete((StatusCodes.OK, response.result))
+        pathPrefix("list") {
+          concat(
+            path("rating") {
+              get {
+                parameters(
+                  "rating".as[Double],
+                  "sortKey".as[Option[String]],
+                  "page".as[Int],
+                  "limit".as[Int]
+                ) { (rating, sortKey, page, limit) =>
+                  onSuccess(
+                    getMoviesByRating(
+                      rating,
+                      sortKey.getOrElse(""),
+                      page,
+                      limit
+                    )
+                  ) { response =>
+                    complete((StatusCodes.OK, response.movies))
                   }
                 }
               }
             }
-          }
-        },
-        path("rate") {
-          pathEnd {
-            concat {
-              post {
-                entity(as[APIUserRating]) { userRateMovie =>
-                  onSuccess(rateMovie(userRateMovie)) { response =>
-                    complete((StatusCodes.OK, response.result))
-                  }
-                }
-              }
-            }
-          }
-        },
-        path("review") {
-          pathEnd {
-            concat {
-              post {
-                entity(as[APIUserReview]) { userReview =>
-                  onSuccess(reviewMovie(userReview)) { response =>
-                    complete((StatusCodes.OK, response.result))
-                  }
-                }
-              }
-            }
-          }
+          )
         },
         path(Segment) { movieId =>
           concat(
