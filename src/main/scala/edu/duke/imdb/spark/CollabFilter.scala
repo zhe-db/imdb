@@ -68,7 +68,6 @@ object CollabFilterTrainer extends ConfigComponent with SparkComponent {
 
 object CollabFilter extends ConfigComponent with SparkComponent {
   val modelPath = config.getString("collab_filter.model.save_path")
-  val sc = spark.sparkContext
   val model: MatrixFactorizationModel =
     MatrixFactorizationModel.load(sc, modelPath)
 

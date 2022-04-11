@@ -16,11 +16,13 @@ import edu.duke.imdb.data.delta.tables.MovieLensLinksDeltaTable
 import edu.duke.imdb.data.delta.tables.MovieLensMoviesDeltaTable
 import edu.duke.imdb.data.delta.tables.MovieLensRatingsDeltaTable
 import edu.duke.imdb.data.delta.tables.MovieLensUsersDeltaTable
+import edu.duke.imdb.data.delta.tables.CrewDetailDeltaTable
 
-object DeltaTables extends ConfigComponent {
+object ImportDeltaTables extends ConfigComponent {
   val movieDetailTable = new MoviedDetailDeltaTable()
   val movieGenreTable = new MoviedGenreDeltaTable()
   val movieCrewTable = new MovieCrewDeltaTable()
+  val crewDetailTable = new CrewDetailDeltaTable()
   val userRatingTable = new UserRatingDeltaTable()
 
   val linksTable = new MovieLensLinksDeltaTable()
@@ -29,23 +31,26 @@ object DeltaTables extends ConfigComponent {
   val usersTable = new MovieLensUsersDeltaTable()
 
   def main(args: Array[String]): Unit = {
-    linksTable.createTable()
-    moviesTable.createTable()
-    ratingsTable.createTable()
-    usersTable.createTable()
-    // createTable()
+    // linksTable.createTable()
+    // moviesTable.createTable()
+    // ratingsTable.createTable()
+    // usersTable.createTable()
+    replicateTablesFromDatabase()
     // movieCrewTable.readData().toDF().show(5)
     // movieGenreTable.readData().toDF().show(5)
-    moviesTable.readData().toDF().show(5)
-    ratingsTable.readData().toDF().show(5)
-    usersTable.readData().toDF().show(5)
-    linksTable.readData().toDF().show(5)
+    // moviesTable.readData().toDF().show(5)
+    // ratingsTable.readData().toDF().show(5)
+    // usersTable.readData().toDF().show(5)
+    // linksTable.readData().toDF().show(5)
+    movieDetailTable.readData().toDF().show(10)
+    movieCrewTable.readData().toDF().show(10)
   }
 
-  def createTable() {
+  def replicateTablesFromDatabase() {
     movieDetailTable.createTable()
     movieGenreTable.createTable()
     movieCrewTable.createTable()
     userRatingTable.createTable()
+    crewDetailTable.createTable()
   }
 }

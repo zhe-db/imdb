@@ -25,4 +25,6 @@ trait SparkComponent extends ConfigComponent {
       "org.apache.spark.sql.delta.catalog.DeltaCatalog"
     )
     .getOrCreate()
+  val sc = spark.sparkContext
+  sc.setLogLevel("OFF")
 }

@@ -87,10 +87,8 @@ object GenerateTrainingData
         Thread.sleep(100)
       }
 
-    val userMappingRDD = userRDD.map(row => (row._1, row._2))
-
-    userMappingRDD
-      .toDF("user", "userId")
+    userRDD
+      .toDF("user", "userId", "email", "password", "lastLogin", "createdOn")
       .repartition(1)
       .write
       .option("header", true)

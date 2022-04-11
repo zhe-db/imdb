@@ -12,6 +12,7 @@ import scala.concurrent.ExecutionContext
 import slick.basic.DatabasePublisher
 import slick.jdbc.ResultSetType
 import slick.jdbc.ResultSetConcurrency
+import java.sql.Date
 
 trait MovieRepositoryComponent {
   def add(movie: MovieDetailRow): Future[MovieDetailRow]
@@ -45,6 +46,20 @@ trait MovieRepositoryComponent {
       sortKey: String,
       limit: Int,
       offset: Int
+  ): Future[PaginatedResult[MovieDetailRow]]
+
+  def getMoviesByYear(
+      startYear: Int,
+      endYear: Int,
+      sortKey: String,
+      limit: Int,
+      offset: Int
+  ): Future[PaginatedResult[MovieDetailRow]]
+
+  def getAllMovies(
+      sortKey: String,
+      limit: Int,
+      page: Int
   ): Future[PaginatedResult[MovieDetailRow]]
 }
 
@@ -181,5 +196,68 @@ class MovieRepository(db: Database) extends MovieRepositoryComponent {
       entities = res.toList,
       hasNextPage = numberOfRows - (offset + limit) > 0
     )
+  }
+
+  override def getMoviesByYear(
+      startYear: Int,
+      endYear: Int,
+      sortKey: String,
+      limit: Int,
+      offset: Int
+  ): Future[PaginatedResult[MovieDetailRow]] = db.run {
+    val q = MovieDetailRows
+      .filter(row =>
+        row.releaseDate >= new Date(
+          startYear,
+          1,
+          1
+        ) && row.releaseDate <= new Date(endYear, 12, 31)
+      )
+
+    val q_sort = sortKey match {
+      case "popularity.desc"   => q.sortBy(_.popularity.desc)
+      case "vote_average.desc" => q.sortBy(_.voteAverage.desc)
+      case "vote_count.desc"   => q.sortBy(_.voteCount.desc)
+      case "title.desc"        => q.sortBy(_.title.desc)
+      case "release_date.desc" => q.sortBy(_.releaseDate.desc)
+      case _                   => q
+    }
+    for {
+      numberOfRows <- q_sort.length.result
+      res <- q_sort.drop(offset).take(limit).result
+    } yield PaginatedResult(
+      totalCount = numberOfRows,
+      entities = res.toList,
+      hasNextPage = numberOfRows - (offset + limit) > 0
+    )
+  }
+
+  override def getAllMovies(
+      sortKey: String,
+      limit: Int,
+      offset: Int
+  ): Future[PaginatedResult[MovieDetailRow]] = db.run {
+    val q = MovieDetailRows
+
+    val q_sort = sortKey match {
+      case "popularity.desc"   => q.sortBy(_.popularity.desc)
+      case "vote_average.desc" => q.sortBy(_.voteAverage.desc)
+      case "vote_count.desc"   => q.sortBy(_.voteCount.desc)
+      case "title.desc"        => q.sortBy(_.title.desc)
+      case "release_date.desc" => q.sortBy(_.releaseDate.desc)
+      case _                   => q
+    }
+    for {
+      numberOfRows <- q_sort.length.result
+      res <- q_sort.drop(offset).take(limit).result
+    } yield PaginatedResult(
+      totalCount = numberOfRows,
+      entities = res.toList,
+      hasNextPage = numberOfRows - (offset + limit) > 0
+    )
+  }
+
+  def getMovieIDs(limit: Int): Future[Seq[Int]] = db.run {
+    MovieDetailRows.map(_.id).take(limit).result
   }
 }

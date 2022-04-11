@@ -55,6 +55,17 @@ class MovieRoutes(movieRegistry: ActorRef[MovieRegistry.Command])(implicit
   ): Future[PaginatedMoviesResponse] =
     movieRegistry.ask(GetMoviesByRatingCount(count, sortKey, limit, page, _))
 
+  def getMoviesByYear(
+      startYear: Int,
+      endYear: Int,
+      sortKey: String,
+      page: Int,
+      limit: Int
+  ): Future[PaginatedMoviesResponse] =
+    movieRegistry.ask(
+      GetMoviesByYear(startYear, endYear, sortKey, limit, page, _)
+    )
+
   val movieRoutes: Route =
     pathPrefix("movies") {
       concat(
@@ -101,6 +112,29 @@ class MovieRoutes(movieRegistry: ActorRef[MovieRegistry.Command])(implicit
                   onSuccess(
                     getMoviesByRatingCount(
                       count,
+                      sortKey.getOrElse(""),
+                      page,
+                      limit
+                    )
+                  ) { response =>
+                    complete((StatusCodes.OK, response.movies))
+                  }
+                }
+              }
+            },
+            path("year") {
+              get {
+                parameters(
+                  "startYear".as[Int],
+                  "endYear".as[Int],
+                  "sortKey".as[Option[String]],
+                  "page".as[Int],
+                  "limit".as[Int]
+                ) { (startYear, endYear, sortKey, page, limit) =>
+                  onSuccess(
+                    getMoviesByYear(
+                      startYear,
+                      endYear,
                       sortKey.getOrElse(""),
                       page,
                       limit

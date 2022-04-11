@@ -80,11 +80,11 @@ class MovieLensSpark(databaseName: String, storageType: StorageType.Storage)
       links_df = Some(
         spark.read.option("header", "true").csv(movieLens.linksFile.toString)
       )
-      usersMappings_df = Some(
-        spark.read
-          .option("header", "true")
-          .csv(movieLens.usersMappingsFile.toString)
-      )
+      //usersMappings_df = Some(
+        //spark.read
+          //.option("header", "true")
+          //.csv(movieLens.usersMappingsFile.toString)
+      //)
       users_df = Some(
         spark.sqlContext.read
           .text(movieLens.usersFile.toString)

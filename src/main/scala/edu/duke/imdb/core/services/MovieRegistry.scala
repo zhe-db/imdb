@@ -67,6 +67,15 @@ object MovieRegistry extends DatabaseComponent {
       replyTo: ActorRef[PaginatedMoviesResponse]
   ) extends Command
 
+  final case class GetMoviesByYear(
+      startYear: Int,
+      endYear: Int,
+      sortKey: String,
+      limit: Int,
+      page: Int,
+      replyTo: ActorRef[PaginatedMoviesResponse]
+  ) extends Command
+
   final case class GetMovieResponse(maybeMovie: Option[MovieDetailRow])
       extends Command
 
@@ -142,6 +151,25 @@ object MovieRegistry extends DatabaseComponent {
       case GetMoviesByRatingCount(count, sortKey, limit, page, replyTo) =>
         movieRepo
           .getMoviesByRatingCount(count, sortKey, limit, page)
+          .onComplete {
+            case Success(res) =>
+              replyTo ! PaginatedMoviesResponse(res)
+            case Failure(f) =>
+              replyTo ! PaginatedMoviesResponse(
+                new PaginatedResult(0, List.empty[MovieDetailRow], false)
+              )
+          }
+        Behaviors.same
+
+      case GetMoviesByYear(startYear, endYear, sortKey, limit, page, replyTo) =>
+        movieRepo
+          .getMoviesByYear(
+            startYear,
+            endYear,
+            sortKey,
+            limit,
+            page
+          )
           .onComplete {
             case Success(res) =>
               replyTo ! PaginatedMoviesResponse(res)
